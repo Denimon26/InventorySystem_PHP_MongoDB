@@ -1,0 +1,6 @@
+{
+    "name": "vendor/denzel",
+    "require": {
+        "mongodb/mongodb": "^1.19"
+    }
+}
