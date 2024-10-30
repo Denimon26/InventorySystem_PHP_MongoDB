@@ -12,7 +12,7 @@
 ?>
 
 <?php
-//
+
   $delete_id = delete_by_id('categories',(int)$categorie['id']);
   if($delete_id){
       $session->msg("s","Categorie deleted.");
