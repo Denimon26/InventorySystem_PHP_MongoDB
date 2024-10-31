@@ -1,30 +1,74 @@
   <?php
+  
     $page_title = 'Admin Home Page';
     require_once('includes/load.php');
+    require 'vendor/autoload.php';
+
+    use MongoDB\Client;
+use MongoDB\BSON\ObjectId;
     // Checkin What level user has permission to view this page
-    page_require_level(2);
+    page_require_level(1);
+   
+    function page_require_level($required_level) {
+      $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+      $client = new Client($uri);
+      $database = $client->selectDatabase('inventory_system');
+      $admins = $database->selectCollection('admin');
+      $admin=  $admins->findOne(['_id' => $_SESSION['user_id']]);
+
+      if (!isset($admin)) {
+
+          redirect('login.php', false);
+      }
+      if ($admin['user_level'] <= (int)$required_level) {
+          return true;
+      } else {
+          // If the user does not have permission, redirect to the home page
+          redirect('home.php', false);
+      }
+  }
+
+ 
   ?>
   <?php
-  $c_categorie     = count_by_id('categories');
-  $c_product       = count_by_id('products');
-  $c_user          = count_by_id('users');
-  $recent_products = find_recent_product_added('5');
+  $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+  $client = new Client($uri);
+  $database = $client->selectDatabase('inventory_system');
+  $categories = $database->selectCollection('categories');
+  $product = $database->selectCollection('product');
+  $users = $database->selectCollection('users');
+  
+  $c_categorie = $categories->countDocuments();
+  $c_product = $product->countDocuments();
+  $c_user = $users->countDocuments();
+  
+  $recent_products_cursor = $product->find([], ['sort' => ['date' => -1], 'limit' => 5]);
+  $recent_products = iterator_to_array($recent_products_cursor);
+  
+  echo '<script>console.log(' . json_encode($recent_products) . ');</script>';
+  
   $low_limit = 99;   
-  $products_by_quantity = find_products_by_quantity($low_limit);
+
+  $products_by_quantity = $product->find(['quantity' => ['$lt' => 5]], ['sort' => ['quantity' => 1]])->toArray();
 
   $quantities = array_column($products_by_quantity, 'quantity');
   sort($quantities);
   $arrlength = count($quantities);
-  $fast_moving_products = find_products_by_type('fast-moving');
-  $slow_moving_products = find_products_by_type('slow-moving');
+  $fast_moving_products = $product->find(['fast-moving']);
+  $slow_moving_products =$product->find(['slow-moving']);
 
   $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
   ?>
   <?php //include_once('layouts/header.php'); ?>
 
+
+
 <div class="row">
   <div class="col-md-6">
-    <?php echo display_msg($msg); ?>
+    <?php 
+      echo '<script>console.log(' . json_encode($msg) . ');</script>';
+
+    //echo display_msg($msg); ?>
   </div>
 </div>
 
@@ -37,7 +81,7 @@
           <i class="glyphicon glyphicon-shopping-cart"></i>
         </div>
         <div class="panel-value pull-right">
-          <h2 class="margin-top"> <?php  echo $c_product['total']; ?> </h2>
+          <h2 class="margin-top"> <?php  echo $c_product; ?> </h2>
           <p class="text-muted">Products</p>
         </div>
        </div>

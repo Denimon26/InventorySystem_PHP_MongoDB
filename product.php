@@ -1,11 +1,38 @@
 <?php
   $page_title = 'All Product';
   require_once('includes/load.php');
+  require 'vendor/autoload.php';
+
+    use MongoDB\Client;
+use MongoDB\BSON\ObjectId;
   // Checkin What level user has permission to view this page
    page_require_level(2);
-  $products = join_product_table();
+
+   function page_require_level($required_level) {
+    $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+    $client = new Client($uri);
+    $database = $client->selectDatabase('inventory_system');
+    $admins = $database->selectCollection('admin');
+    $admin=  $admins->findOne(['_id' => $_SESSION['user_id']]);
+
+    if (!isset($admin)) {
+
+        redirect('login.php', false);
+    }
+    if ($admin['user_level'] <= (int)$required_level) {
+        return true;
+    } else {
+        // If the user does not have permission, redirect to the home page
+        redirect('home.php', false);
+    }
+}
+$uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+    $client = new Client($uri);
+    $database = $client->selectDatabase('inventory_system');
+    $products2 = $database->selectCollection('product');
+  $products = $products2->find();
 ?>
-<?php include_once('layouts/header.php'); ?>
+<?php //include_once('layouts/header.php'); ?>
   <div class="row">
      <div class="col-md-12">
        <?php echo display_msg($msg); ?>
@@ -44,17 +71,17 @@
                   <?php endif; ?>
                   </td>
                   <td> <?php echo remove_junk($product['name']); ?></td>
-                  <td class="text-center"> <?php echo remove_junk($product['categorie']); ?></td>
+                  <td class="text-center"> <?php echo remove_junk($product['categories']); ?></td>
                   <td class="text-center"> <?php echo remove_junk($product['quantity']); ?></td>
                   <td class="text-center"> <?php echo remove_junk($product['buy_price']); ?></td>
                   <td class="text-center"> <?php echo remove_junk($product['eoq']); ?></td>
                   <td class="text-center"> <?php echo read_date($product['date']); ?></td>
                   <td class="text-center">
                     <div class="btn-group">
-                      <a href="edit_product.php?id=<?php echo (int)$product['id'];?>" class="btn btn-info btn-xs"  title="Edit" data-toggle="tooltip">
+                      <a href="edit_product.php?id=<?php echo $product['_id'];?>" class="btn btn-info btn-xs"  title="Edit" data-toggle="tooltip">
                         <span class="glyphicon glyphicon-edit"></span>
                       </a>
-                      <a href="delete_product.php?id=<?php echo (int)$product['id'];?>" class="btn btn-danger btn-xs"  title="Delete" data-toggle="tooltip">
+                      <a href="delete_product.php?id=<?php echo $product['_id'];?>" class="btn btn-danger btn-xs"  title="Delete" data-toggle="tooltip">
                         <span class="glyphicon glyphicon-trash"></span>
                       </a>
                     </div>

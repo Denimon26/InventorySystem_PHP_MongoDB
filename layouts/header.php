@@ -1,4 +1,18 @@
-<?php $user = current_user(); ?>
+<?php 
+use MongoDB\Client;
+use MongoDB\BSON\ObjectId;
+
+$user = current_user2();
+
+function current_user2() {
+    global $db;
+    if (isset($_SESSION['_id'])) {
+        $user_id = new MongoDB\BSON\ObjectId($_SESSION['_id']);
+        return find_by_id('users', $user_id);
+    }
+    return null;
+}
+?>
 <!DOCTYPE html>
   <html lang="en">
     <head>

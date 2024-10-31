@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'vendor/denzel',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '44380df76a0a9d174fa2176039cbe542cba9b255',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -47,9 +47,9 @@
             'dev_requirement' => false,
         ),
         'vendor/denzel' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '44380df76a0a9d174fa2176039cbe542cba9b255',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
