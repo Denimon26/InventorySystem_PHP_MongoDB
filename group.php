@@ -11,8 +11,8 @@
    $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
    $client = new Client($uri);
    $database = $client->selectDatabase('inventory_system');
-   $users = $database->selectCollection('users');
-  $all_groups = $users->find();
+   $groups = $database->selectCollection('group');
+  $all_groups = $groups->find();
 
   function page_require_level($required_level) {
     $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';

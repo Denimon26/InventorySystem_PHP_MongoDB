@@ -19,7 +19,7 @@ $categories=$database->selectCollection('categories');
   $all_categories =  $categories->find();
 
 ?>
-<?php include_once('layouts/header.php'); ?>
+<?php //include_once('layouts/header.php'); ?>
 <div class="row">
   <div class="col-md-12">
     <?php echo display_msg($msg); ?>
@@ -60,4 +60,4 @@ $categories=$database->selectCollection('categories');
     </div>
   </div>
 </div>
-<?php include_once('layouts/footer.php'); ?>
+<?php //include_once('layouts/footer.php'); ?>
