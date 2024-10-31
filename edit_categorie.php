@@ -63,4 +63,4 @@ if(isset($_POST['edit_cat'])){
 
 
 
-<?php include_once('layouts/footer.php'); ?>
+<?php //include_once('layouts/footer.php'); ?>

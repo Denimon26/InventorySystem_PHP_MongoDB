@@ -28,4 +28,4 @@
        </div>
    </div>
 </div>
-<?php include_once('layouts/footer.php'); ?>
+<?php //include_once('layouts/footer.php'); ?>
