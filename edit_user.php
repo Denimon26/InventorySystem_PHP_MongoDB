@@ -5,12 +5,12 @@
    page_require_level(1);
 ?>
 <?php
-  $e_user = find_by_id('users',(int)$_GET['id']);
-  $groups  = find_all('user_groups');
-  if(!$e_user){
-    $session->msg("d","Missing user id.");
-    redirect('users.php');
-  }
+  //$e_user = find_by_id('users',(int)$_GET['id']);
+  //$groups  = find_all('user_groups');
+  //if(!$e_user){
+  //  $session->msg("d","Missing user id.");
+  //  redirect('users.php');
+  //}
 ?>
 
 <?php

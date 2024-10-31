@@ -2,6 +2,7 @@
   $page_title = 'All User';
   require_once('includes/load.php');
   require 'vendor/autoload.php';
+  
 
   use MongoDB\Client;
   use MongoDB\BSON\ObjectId;
@@ -37,6 +38,7 @@ $collection = $db->users;
 }
 ?>
 <?//php include_once('layouts/header.php'); ?>
+<link rel="stylesheet" href="libs/css/main.css" />
 <div class="row">
    <div class="col-md-12">
      <?php echo display_msg($msg); ?>
@@ -50,7 +52,7 @@ $collection = $db->users;
           <span class="glyphicon glyphicon-th"></span>
           <span>Users</span>
        </strong>
-         <a href="add_user.php" class="btn btn-info pull-right">Add New User</a>
+         <a href="add_user.php" class="btn btn-add-user">Add New User</a>
       </div>
      <div class="panel-body">
       <table class="table table-bordered table-striped">
@@ -82,10 +84,10 @@ $collection = $db->users;
            <td><?php echo read_date($a_user['last_login'])?></td>
            <td class="text-center">
              <div class="btn-group">
-                <a href="edit_user.php?id=<?php echo (int)$a_user['id'];?>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Edit">
+                <a href="edit_user.php?id=<?php echo $user['_id']; ?>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Edit">Edit
                   <i class="glyphicon glyphicon-pencil"></i>
                </a>
-                <a href="delete_user.php?id=<?php echo (int)$a_user['id'];?>" class="btn btn-xs btn-danger" data-toggle="tooltip" title="Remove">
+               <a href="remove_user.php?id=<?php echo $user['_id']; ?>" class="btn btn-xs btn-danger" data-toggle="tooltip" title="Remove">Remove
                   <i class="glyphicon glyphicon-remove"></i>
                 </a>
                 </div>

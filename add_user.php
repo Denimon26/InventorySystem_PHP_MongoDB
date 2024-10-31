@@ -2,8 +2,8 @@
   $page_title = 'Add User';
   require_once('includes/load.php');
   // Checkin What level user has permission to view this page
-  page_require_level(1);
-  $groups = find_all('user_groups');
+  //page_require_level(1);
+  //$groups = find_all('user_groups');
 ?>
 <?php
   if(isset($_POST['add_user'])){
@@ -38,10 +38,11 @@
  }
 ?>
 <?php //include_once('layouts/header.php'); ?>
+<link rel="stylesheet" href="libs/css/main.css" />
   <?php echo display_msg($msg); ?>
   <div class="row">
-    <div class="panel panel-default">
-      <div class="panel-heading">
+    <div class="panel-form">
+      <div class="panel-heading-form">
         <strong>
           <span class="glyphicon glyphicon-th"></span>
           <span>Add New User</span>
