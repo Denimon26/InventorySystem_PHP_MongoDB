@@ -139,16 +139,16 @@ if (isset($_POST['add_product'])) {
 
 <?php include_once('layouts/footer.php'); ?>*/
 
-require '../vendor/autoload.php';
+require 'vendor/autoload.php';
 
 // Set up MongoDB Client
 $client = new MongoDB\Client('mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
 $db = $client->inventory_system;
-$collection = $db->products; 
+$collection = $db->product; 
 
 // Check if the form is submitted
 if (isset($_POST['add_product'])) {
-    $req_fields = array('product-title', 'product-categorie', 'product-quantity', 'buying-price', 'critical-level');
+    $req_fields = array('product-title', 'product-categorie', 'product-quantity', 'buying-price');
     
     // Validate fields (simplified version for MongoDB use)
     foreach ($req_fields as $field) {
@@ -162,7 +162,6 @@ if (isset($_POST['add_product'])) {
         $p_cat = $_POST['product-categorie'];
         $p_qty = (int)$_POST['product-quantity'];
         $p_buy = (float)$_POST['buying-price'];
-        $p_critical = (int)$_POST['critical-level']; // Critical level input
 
         // EOQ Calculation (example values for costs)
         $demand_rate = $p_qty;
@@ -176,9 +175,10 @@ if (isset($_POST['add_product'])) {
             'quantity' => $p_qty,
             'buy_price' => $p_buy,
             'eoq' => $eoq,
-            'categorie_id' => $p_cat,
+            'categories' => $p_cat,
+            'image' => "",
+            'media_id' => "",
             'date' => new MongoDB\BSON\UTCDateTime(),
-            'critical_level' => $p_critical,
         ];
 
         // Insert product into MongoDB collection
@@ -188,9 +188,7 @@ if (isset($_POST['add_product'])) {
             echo "<script>alert('Product added successfully');</script>";
 
             // If the quantity is below the critical level, display a warning
-            if ($p_qty <= $p_critical) {
-                echo "<script>alert('Warning: The quantity of $p_name is below the critical level! Current Quantity: $p_qty');</script>";
-            }
+       
         } else {
             echo "<script>alert('Sorry, failed to add product!');</script>";
         }
@@ -200,10 +198,9 @@ if (isset($_POST['add_product'])) {
 }
 ?>
 
-<?php include_once('layouts/header.php'); ?>
+<?php// include_once('layouts/header.php'); ?>
 <div class="row">
   <div class="col-md-12">
-    <?php echo display_msg($msg); ?>
   </div>
 </div>
   <div class="row">
@@ -230,7 +227,8 @@ if (isset($_POST['add_product'])) {
                 <div class="row">
                   <div class="col-md-6">
                     <select class="form-control" name="product-categorie">
-                      <option value="">Select Product Category</option>
+                    <option value="">Select Product Category</option>
+                    <option value="fast-sell">fast-sell</option>
                     </select>
                   </div>
                 </div>
@@ -257,13 +255,7 @@ if (isset($_POST['add_product'])) {
                  </div>
                </div>
               </div>
-              <div class="form-group">
-                 <div class="col-md-4">
-                    <div class="input-group">
-                      <input type="number" class="form-control" name="critical-level" placeholder="Critical Level">
-                    </div>
-                 </div>
-              </div>
+              
               <button type="submit" name="add_product" class="btn btn-danger">Add product</button>
           </form>
          </div>
@@ -272,6 +264,5 @@ if (isset($_POST['add_product'])) {
     </div>
   </div>
 
-<?php include_once('layouts/footer.php'); ?>
-?>
+<?php //include_once('layouts/footer.php'); ?>
 
