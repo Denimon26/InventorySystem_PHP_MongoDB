@@ -48,7 +48,7 @@
         <span class="glyphicon glyphicon-th"></span>
         <span>Groups</span>
      </strong>
-       <a href="add_user.php" class="btn btn-add-user">Add New Group</a>
+       <a href="add_group.php" class="btn btn-add-user">Add New Group</a>
     </div>
      <div class="panel-body">
       <table class="table table-bordered">
