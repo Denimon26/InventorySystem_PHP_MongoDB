@@ -40,7 +40,7 @@
    }
  }
 ?>
-<?php include_once('layouts/header.php'); ?>
+<?php //include_once('layouts/header.php'); ?>
 <div class="login-page">
     <div class="text-center">
        <h3>Edit Group</h3>

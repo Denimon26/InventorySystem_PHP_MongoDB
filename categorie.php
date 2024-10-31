@@ -27,7 +27,7 @@
    }
  }
 ?>
-<?php include_once('layouts/header.php'); ?>
+<?php //include_once('layouts/header.php'); ?>
 
   <div class="row">
      <div class="col-md-12">
