@@ -257,6 +257,108 @@ body {
   justify-content: center;
 } 
 
+/* Header Style */
+#header {
+  position: fixed;
+  z-index: 99;
+  top: 0;
+  left: 0;
+  background-color: #343a40; /* Dark background for header */
+  width: 100%;
+  height: 65px;
+  line-height: 65px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Slightly darker shadow */
+}
+
+header > .logo {
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  width: 250px;
+  background-color: #db3434;
+}
+
+/* Header Date Style */
+.header-date {
+  color: #f8f9fa; /* Light color for better contrast */
+  margin-left: 20px;
+}
+
+.info-menu{
+  height: 60px;
+  margin: 0;
+  line-height: 60px;
+  padding: 0 15px;
+}.info-menu li.profile {
+  position: relative;
+}.profile a.toggle{
+  text-decoration: none;
+  text-align: center;
+  font-size: 14px;
+  color: rgba(150, 150, 158, 1.0);
+  position: relative;
+  padding: 10px 10px 10px 0;
+  margin: 0;
+  background: #f9f9f9;
+  border-radius: 30px;
+}.info-menu li.profile a img{
+  width: 30px;
+  height: 30px;
+}.dropdown-menu{
+  margin-top: 4px;
+  border-color: #fefefe;
+  border-radius: 0;
+   box-shadow: 0px 0px 5px rgba(86, 96, 117, 0.15);
+  -moz-box-shadow: 0px 0px 5px rgba(86, 96, 117, 0.15);
+  -webkit-box-shadow: 0px 0px 5px rgba(86, 96, 117, 0.15);
+  }.dropdown-menu li{
+    margin: 0;
+    padding: 0;
+    display: block;
+    line-height: 35px;
+ }.dropdown-menu li a{
+  text-decoration: none;
+  display: block;
+  font-size: 14px;
+  position: relative;
+  line-height: 30px;
+  width: 100%;
+  border-bottom: 1px solid #f4faf9;
+}.dropdown-menu li a i{
+  margin-right: 5px;
+}.dropdown-menu li.last a{
+  border-bottom: 0;
+}.datepicker{
+  text-align: center;
+}
+
+/* Notification */
+
+.notification-btn:hover {
+  transform: scale(1.05); /* Slight scale effect on hover */
+}
+
+/* Notification Icon Style */
+#notif-img {
+  width: 35px; /* Icon size */
+  height: 35px; /* Maintain aspect ratio */
+  border-style: solid;
+  border-color: red;
+}
+
+/* Notification Count Badge */
+#notification-count {
+  
+  background-color: #ffc107; /* Yellow background */
+  color: #343a40; /* Dark text color */
+  border-radius: 100%; /* Circle shape */
+
+}
+
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .table th, .table td {

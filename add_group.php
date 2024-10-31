@@ -95,31 +95,42 @@ if (isset($_POST['add'])) {
 }
 ?>
 <?//php include_once('layouts/header.php'); ?>
+<link rel="stylesheet" href="libs/css/main.css" />
+<?php echo display_msg($msg); ?>
 <div class="login-page">
-  <div class="text-center">
-    <h3>Add new user Group</h3>
+  <div class="panel-form">
+    <div class="panel-heading-form">
+      <strong>
+        <span class="glyphicon glyphicon-th"></span>
+        <span>Add New User Group</span>
+      </strong>
+    </div>
+    <div class="panel-body">
+      <div class="col-md-6">
+        <form method="post" action="add_group.php">
+          <div class="form-group">
+            <label for="group-name">Group Name</label>
+            <input type="text" class="form-control" name="group-name" placeholder="Group Name" required>
+          </div>
+          <div class="form-group">
+            <label for="group-level">Group Level</label>
+            <input type="number" class="form-control" name="group-level" placeholder="Group Level" required min="1">
+          </div>
+          <div class="form-group">
+            <label for="status">Status</label>
+            <select class="form-control" name="status" required>
+              <option value="1">Active</option>
+              <option value="0">Deactive</option>
+            </select>
+          </div>
+          <div class="form-group clearfix">
+            <button type="submit" name="add" class="btn btn-primary">Add Group</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
-  <?php echo display_msg($msg); ?>
-  <form method="post" action="add_group.php" class="clearfix">
-    <div class="form-group">
-      <label for="name" class="control-label">Group Name</label>
-      <input type="name" class="form-control" name="group-name">
-    </div>
-    <div class="form-group">
-      <label for="level" class="control-label">Group Level</label>
-      <input type="number" class="form-control" name="group-level">
-    </div>
-    <div class="form-group">
-      <label for="status">Status</label>
-      <select class="form-control" name="status">
-        <option value="1">Active</option>
-        <option value="0">Deactive</option>
-      </select>
-    </div>
-    <div class="form-group clearfix">
-      <button type="submit" name="add" class="btn btn-info">Update</button>
-    </div>
-  </form>
+</div>
 </div>
 
 <?php //include_once('layouts/footer.php'); ?>
