@@ -42,7 +42,7 @@
    }
  }
 ?>
-<?php include_once('layouts/header.php'); ?>
+<?//php include_once('layouts/header.php'); ?>
 <div class="login-page">
     <div class="text-center">
        <h3>Add new user Group</h3>
@@ -70,4 +70,4 @@
     </form>
 </div>
 
-<?php include_once('layouts/footer.php'); ?>
+<?php //include_once('layouts/footer.php'); ?>

@@ -131,4 +131,4 @@ if(isset($_POST['update-pass'])) {
   </div>
 
  </div>
-<?php include_once('layouts/footer.php'); ?>
+<?php //include_once('layouts/footer.php'); ?>
