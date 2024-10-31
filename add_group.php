@@ -32,6 +32,10 @@ if (isset($_POST['add'])) {
 
 
 
+  $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+  $client = new Client($uri);
+  $database = $client->selectDatabase('inventory_system');
+  $groups = $database->selectCollection('group');
 
   $req_fields = array('group-name', 'group-level');
   validate_fields($req_fields);
@@ -59,40 +63,34 @@ if (isset($_POST['add'])) {
     $session->msg("d", $errors);
     redirect('add_group.php', false);
   }
-  try {
 
-    $result = $collection->find([
-      '$and' => [
-        [
-          'registered_date' => [
-            '$gte' => new UTCDateTime(strtotime('-1 year') * 1000)
-          ]
-        ],
-        [
-          'personal_details.date_of_birth' => ['$exists' => true],
-          'personal_details.address' => ['$exists' => true],
-          'personal_details.tin_no' => ['$exists' => true]
-        ],
-        [
-          'employer_details.salary' => [
-            '$gte' => 30000,
-            '$lte' => 100000
-          ]
-        ]
-      ]
+    $result = $groups->find([
+          'group_name' =>$_POST['group-name']
     ]);
-    return iterator_to_array($result);
-  } catch (Exception $e) {
-    return "Error in AND filter: " . $e->getMessage();
-  }
+    echo '<script>console.log('.json_encode(value: $_POST['group-name']).');</script>';
 
-  if (find_by_groupName($_POST['group-name']) === false) {
-    $session->msg('d', '<b>Sorry!</b> Entered Group Name already in database!');
-    redirect('add_group.php', false);
-  } elseif (find_by_groupLevel($_POST['group-level']) === false) {
-    $session->msg('d', '<b>Sorry!</b> Entered Group Level already in database!');
-    redirect('add_group.php', false);
-  }
+    if(iterator_to_array($result))
+    {
+      //echo '<script>console.log("dupes");</script>';
+    //  echo '<script>console.log('.json_encode(iterator_to_array($result)).');</script>';
+      $session->msg('d', '<b>Sorry!</b> Entered Group Name already in database!');
+      redirect('add_group.php', false);
+    }
+    else
+    {
+      $data=[
+        'group_name'=>$name,
+        'group_level'=>$level,
+        'group_status'=>$status
+
+      ];
+      $result2 = $groups->insertOne($data);
+      echo '<script>alert("Success")</script>';
+
+
+    }
+
+
 
 }
 ?>
