@@ -1,12 +1,40 @@
 <?php
   $page_title = 'All User';
   require_once('includes/load.php');
+  require 'vendor/autoload.php';
+
+  use MongoDB\Client;
+  use MongoDB\BSON\ObjectId;
+// Set up MongoDB Client
+$client = new MongoDB\Client('mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
+$db = $client->inventory_system;
+$collection = $db->users; 
 ?>
 <?php
 // Checkin What level user has permission to view this page
  page_require_level(1);
 //pull out all user form database
- $all_users = find_all_user();
+ $all_users = $collection->find();
+
+
+ function page_require_level($required_level) {
+  $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+  $client = new Client($uri);
+  $database = $client->selectDatabase('inventory_system');
+  $admins = $database->selectCollection('admin');
+  $admin=  $admins->findOne(['_id' => $_SESSION['user_id']]);
+
+  if (!isset($admin)) {
+
+      redirect('login.php', false);
+  }
+  if ($admin['user_level'] <= (int)$required_level) {
+      return true;
+  } else {
+      // If the user does not have permission, redirect to the home page
+      redirect('home.php', false);
+  }
+}
 ?>
 <?//php include_once('layouts/header.php'); ?>
 <div class="row">
