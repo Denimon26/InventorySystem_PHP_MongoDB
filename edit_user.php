@@ -59,7 +59,7 @@ if(isset($_POST['update-pass'])) {
         }
   } else {
     $session->msg("d", $errors);
-    redirect('edit_user.php?id='.(int)$e_user['id'],false);
+    redirect('edit_user.php?id='.(int)$e_user['_id'],false);
   }
 }
 
