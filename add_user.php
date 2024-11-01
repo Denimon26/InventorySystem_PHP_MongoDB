@@ -1,9 +1,38 @@
 <?php
   $page_title = 'Add User';
   require_once('includes/load.php');
+  require 'vendor/autoload.php';
+
+  use MongoDB\Client;
+  use MongoDB\BSON\ObjectId;
   // Checkin What level user has permission to view this page
-  //page_require_level(1);
-  //$groups = find_all('user_groups');
+  page_require_level(1);
+  $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+  $client = new Client($uri);
+  $database = $client->selectDatabase('inventory_system');
+  $group = $database->selectCollection('group');
+  $users = $database->selectCollection('users');
+  $groups = iterator_to_array($group->find());
+  
+
+  function page_require_level($required_level) {
+    $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+    $client = new Client($uri);
+    $database = $client->selectDatabase('inventory_system');
+    $admins = $database->selectCollection('admin');
+    $admin=  $admins->findOne(['_id' => $_SESSION['user_id']]);
+  
+    if (!isset($admin)) {
+  
+        redirect('login.php', false);
+    }
+    if ($admin['user_level'] <= (int)$required_level) {
+        return true;
+    } else {
+        // If the user does not have permission, redirect to the home page
+        redirect('home.php', false);
+    }
+  }
 ?>
 <?php
   if(isset($_POST['add_user'])){
@@ -12,25 +41,27 @@
    validate_fields($req_fields);
 
    if(empty($errors)){
-           $name   = remove_junk($db->escape($_POST['full-name']));
-       $username   = remove_junk($db->escape($_POST['username']));
-       $password   = remove_junk($db->escape($_POST['password']));
-       $user_level = (int)$db->escape($_POST['level']);
+           $name   = remove_junk(($_POST['full-name']));
+       $username   = remove_junk(($_POST['username']));
+       $password   = remove_junk(($_POST['password']));
+       $group_name   = remove_junk(($_POST['group_name']));
+       $user_level = (int)($_POST['level']);
        $password = sha1($password);
-        $query = "INSERT INTO users (";
-        $query .="name,username,password,user_level,status";
-        $query .=") VALUES (";
-        $query .=" '{$name}', '{$username}', '{$password}', '{$user_level}','1'";
-        $query .=")";
-        if($db->query($query)){
-          //sucess
-          $session->msg('s',"User account has been creted! ");
-          redirect('add_user.php', false);
-        } else {
-          //failed
-          $session->msg('d',' Sorry failed to create account!');
-          redirect('add_user.php', false);
-        }
+       
+       $data=[
+        'name'=>$name,
+        'username'=>$username,
+        'password'=>$password,
+        'group_level'=>$user_level,
+        'group_name'=>$group_name,
+        'group_status'=>"1",
+        'last-login'=>null,
+        'status'=>1
+
+      ];
+      $result2 = $users->insertOne($data);
+      echo '<script>alert("Success")</script>';
+
    } else {
      $session->msg("d", $errors);
       redirect('add_user.php',false);
@@ -64,13 +95,24 @@
                 <input type="password" class="form-control" name ="password"  placeholder="Password">
             </div>
             <div class="form-group">
-              <label for="level">User Role</label>
-                <select class="form-control" name="level">
-                  <?php foreach ($groups as $group ):?>
-                   <option value="<?php echo $group['group_level'];?>"><?php echo ucwords($group['group_name']);?></option>
+              <label for="group_name">User Group</label>
+                <select class="form-control" name="group_name">
+                  <?php foreach ($groups as $group ):                    ?>
+                   <option value="<?php echo ucwords($group['group_name']);?>"><?php echo ucwords($group['group_name']);?></option>
                 <?php endforeach;?>
                 </select>
             </div>
+            <div class="form-group">
+              <label for="level">User Level</label>
+                <select class="form-control" name="level">
+                  <?php foreach ($groups as $group ):
+                    ?>
+                  
+                   <option value="<?php echo  ucwords($group['group_level']);?>"><?php echo  ucwords($group['group_level']);?></option>
+                <?php endforeach;?>
+                </select>
+            </div>
+            
             <div class="form-group clearfix">
               <button type="submit" name="add_user" class="btn btn-primary">Add User</button>
             </div>
