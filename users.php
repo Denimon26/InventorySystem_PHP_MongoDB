@@ -87,7 +87,7 @@ $collection = $db->users;
                 <a href="edit_user.php?id=<?php echo $user['_id']; ?>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Edit">Edit
                   <i class="glyphicon glyphicon-pencil"></i>
                </a>
-               <a href="remove_user.php?id=<?php echo $user['_id']; ?>" class="btn btn-xs btn-danger" data-toggle="tooltip" title="Remove">Remove
+               <a href="delete_user.php?id=<?php echo $user['_id']; ?>" class="btn btn-xs btn-danger" data-toggle="tooltip" title="Remove">Remove
                   <i class="glyphicon glyphicon-remove"></i>
                 </a>
                 </div>

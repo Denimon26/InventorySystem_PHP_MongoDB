@@ -144,7 +144,7 @@ require 'vendor/autoload.php';
 // Set up MongoDB Client
 $client = new MongoDB\Client('mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
 $db = $client->inventory_system;
-$collection = $db->product; 
+$collection = $db->products; 
 
 // Check if the form is submitted
 if (isset($_POST['add_product'])) {
@@ -175,9 +175,7 @@ if (isset($_POST['add_product'])) {
             'quantity' => $p_qty,
             'buy_price' => $p_buy,
             'eoq' => $eoq,
-            'categories' => $p_cat,
-            'image' => "",
-            'media_id' => "",
+            'categorie_id' => $p_cat,
             'date' => new MongoDB\BSON\UTCDateTime(),
         ];
 
@@ -188,7 +186,9 @@ if (isset($_POST['add_product'])) {
             echo "<script>alert('Product added successfully');</script>";
 
             // If the quantity is below the critical level, display a warning
-       
+            if ($p_qty <= $p_critical) {
+                echo "<script>alert('Warning: The quantity of $p_name is below the critical level! Current Quantity: $p_qty');</script>";
+            }
         } else {
             echo "<script>alert('Sorry, failed to add product!');</script>";
         }
@@ -198,7 +198,7 @@ if (isset($_POST['add_product'])) {
 }
 ?>
 
-<?php// include_once('layouts/header.php'); ?>
+<?//php include_once('layouts/header.php'); ?>
 <div class="row">
   <div class="col-md-12">
   </div>
@@ -227,8 +227,7 @@ if (isset($_POST['add_product'])) {
                 <div class="row">
                   <div class="col-md-6">
                     <select class="form-control" name="product-categorie">
-                    <option value="">Select Product Category</option>
-                    <option value="fast-sell">fast-sell</option>
+                      <option value="">Select Product Category</option>
                     </select>
                   </div>
                 </div>
@@ -255,7 +254,6 @@ if (isset($_POST['add_product'])) {
                  </div>
                </div>
               </div>
-              
               <button type="submit" name="add_product" class="btn btn-danger">Add product</button>
           </form>
          </div>
@@ -264,5 +262,6 @@ if (isset($_POST['add_product'])) {
     </div>
   </div>
 
-<?php //include_once('layouts/footer.php'); ?>
+<?php include_once('layouts/footer.php'); ?>
+?>
 

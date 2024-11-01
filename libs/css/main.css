@@ -5,6 +5,7 @@ body {
   color: #333;
   margin: 0;
   padding: 20px;
+  margin-top: 65px;
 }
 
 /* Panel Styling */
@@ -14,23 +15,26 @@ body {
   background-color: #fff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+
 }
 
 .panel-heading {
   background-color: #333; /* Black background */
   color: #ffc107; /* Yellow text */
   padding: 15px;
-  font-size: 18px;
+  font-size: 18px;  
   font-weight: bold;
   text-transform: uppercase;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: center;  
+  
 }
 
 .panel-heading strong {
   display: flex;
   align-items: center;
+  
 }
 
 .panel-heading .glyphicon {
@@ -358,6 +362,133 @@ header > .logo {
 
 }
 
+/* Footer */
+#footer {
+  position: fixed;
+  background-color: #db3434; /* Matches the header background */
+  color: #ffffff; /* White text for contrast */
+  padding: 10px; /* Reduced padding for a smaller footer */
+  text-align: center;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.footer-logo {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 5px; /* Reduced margin */
+  font-size: 16px; /* Adjust font size */
+}
+
+.footer-links {
+  margin: 5px 0; /* Reduced margin */
+}
+
+.footer-links a {
+  color: #ffffff;
+  text-decoration: none;
+  margin: 0 10px; /* Reduced margin between links */
+  transition: color 0.3s;
+  font-size: 14px; /* Adjust font size */
+}
+
+.footer-links a:hover {
+  color: #f0e68c; /* Light color on hover */
+}
+
+.footer-notif {
+  margin-top: 5px; /* Reduced margin */
+}
+
+.footer-notif img {
+  width: 20px; /* Smaller icon size */
+  height: 20px;
+  margin: 0 3px; /* Reduced margin between icons */
+  transition: transform 0.3s;
+}
+
+.footer-notif img:hover {
+  transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+/* Login Page Container */
+.login-page {
+  width: 100%;
+  max-width: 400px;
+  padding: 40px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+/* Heading and Subheading */
+.login-page h1 {
+  font-size: 28px;
+  color: #343a40;
+  margin-bottom: 10px;
+}
+
+.login-page p {
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+/* Form Styling */
+form.clearfix {
+  margin-top: 20px;
+}
+
+.control-label {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+  display: block;
+}
+
+/* Error Message Display */
+.alert {
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  color: #fff;
+  background-color: #dc3545;
+  text-align: center;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 0;
+}
+
+/* Dropdown for Filter */
+select.form-control {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  margin-top: 10px;
+}
+
+select.form-control:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+}
+
+
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
@@ -368,5 +499,17 @@ header > .logo {
   .btn, .btn-add-user {
       font-size: 12px;
       padding: 5px 8px;
+  }
+}
+/* Extra Small Screen Adjustments */
+@media (max-width: 576px) {
+  .row {
+    display: block;
+  }
+  .panel-heading {
+    font-size: 14px;
+  }
+  .panel-body {
+    padding: 10px;
   }
 }

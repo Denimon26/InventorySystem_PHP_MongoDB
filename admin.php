@@ -60,35 +60,33 @@ use MongoDB\BSON\ObjectId;
   $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
   ?>
   <?php //include_once('layouts/header.php'); ?>
-
-
+  <link rel="stylesheet" href="libs/css/main.css" />
 
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-half">
     <?php 
       echo '<script>console.log(' . json_encode($msg) . ');</script>';
-
-    //echo display_msg($msg); ?>
+    ?>
   </div>
 </div>
 
 <div class="row">
 
-<a href="product.php" style="color:black;">
-    <div class="col-md-3">
+<a href="product.php" class="product-link">
+    <div class="col-quarter">
        <div class="panel panel-box clearfix">
-         <div class="panel-icon pull-left bg-blue2">
+         <div class="panel-icon bg-blue2">
           <i class="glyphicon glyphicon-shopping-cart"></i>
         </div>
-        <div class="panel-value pull-right">
-          <h2 class="margin-top"> <?php  echo $c_product; ?> </h2>
-          <p class="text-muted">Products</p>
+        <div class="panel-value">
+          <h2 class="panel-count"> <?php  echo $c_product; ?> </h2>
+          <p class="panel-text">Products</p>
         </div>
        </div>
     </div>
-	</a>
+</a>
 
-  <div class="col-md-4">
+  <div class="col-third">
     <div class="panel panel-default">
       <div class="panel-heading">
         <strong>
@@ -97,10 +95,9 @@ use MongoDB\BSON\ObjectId;
         </strong>
       </div>
       <div class="panel-body">
-        <!-- Dropdown for filtering -->
         <form method="get" action="">
           <label for="filter">Filter by:</label>
-          <select name="filter" id="filter" onchange="this.form.submit()">
+          <select name="filter" id="filter" class="form-control" onchange="this.form.submit()">
             <option value="all" <?php if($filter == 'all') echo 'selected'; ?>>All</option>
             <option value="critical" <?php if($filter == 'critical') echo 'selected'; ?>>Critical</option>
             <option value="low" <?php if($filter == 'low') echo 'selected'; ?>>Low</option>
@@ -109,11 +106,9 @@ use MongoDB\BSON\ObjectId;
         
         <ul class="list-group">
           <?php
-          // Sort the products based on quantity
           $quantities = array_column($products_by_quantity, 'quantity');
           array_multisort($quantities, SORT_ASC, $products_by_quantity);
 
-          // Loop through the sorted products and filter based on the selection
           foreach ($products_by_quantity as $product):
             $quantity = $product['quantity'];
             $is_critical = ($quantity < 20);
@@ -123,8 +118,8 @@ use MongoDB\BSON\ObjectId;
             if ($filter == 'low' && !$is_low) continue;
           ?>
             <li class="list-group-item">
-              <span class="badge"><?php echo $quantity; // Display full quantity ?></span>
-              <?php echo remove_junk($product['name']); // Display product name ?>
+              <span class="badge"><?php echo $quantity; ?></span>
+              <?php echo remove_junk($product['name']); ?>
               <?php if ($is_critical): ?>
                 <span class="label label-danger pull-right">Critical</span>
               <?php elseif ($is_low): ?>
@@ -137,8 +132,7 @@ use MongoDB\BSON\ObjectId;
     </div>
   </div>
 
-    <!-- Fast-Moving Products Panel -->
-    <div class="col-md-4">
+  <div class="col-third">
     <div class="panel panel-default">
       <div class="panel-heading">
         <strong>
@@ -159,8 +153,7 @@ use MongoDB\BSON\ObjectId;
     </div>
   </div>
 
-  <!-- Slow-Moving Products Panel -->
-  <div class="col-md-4">
+  <div class="col-third">
     <div class="panel panel-default">
       <div class="panel-heading">
         <strong>

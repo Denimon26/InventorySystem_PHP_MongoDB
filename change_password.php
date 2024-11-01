@@ -2,9 +2,9 @@
   $page_title = 'Change Password';
   require_once('includes/load.php');
   // Checkin What level user has permission to view this page
-  page_require_level(3);
+  //page_require_level(3);
 ?>
-<?php $user = current_user(); ?>
+<?php //$user = current_user(); ?>
 <?php
   if(isset($_POST['update'])){
 
