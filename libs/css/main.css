@@ -422,15 +422,21 @@ header > .logo {
 
 /* Login Page Container */
 .login-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   max-width: 400px;
+  height: 100vh; /* Full viewport height */
+  margin: 0 auto; /* Center horizontally */
   padding: 40px;
   background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  text-align: center;
 }
+
 
 /* Heading and Subheading */
 .login-page h1 {
@@ -499,17 +505,5 @@ select.form-control:focus {
   .btn, .btn-add-user {
       font-size: 12px;
       padding: 5px 8px;
-  }
-}
-/* Extra Small Screen Adjustments */
-@media (max-width: 576px) {
-  .row {
-    display: block;
-  }
-  .panel-heading {
-    font-size: 14px;
-  }
-  .panel-body {
-    padding: 10px;
   }
 }
