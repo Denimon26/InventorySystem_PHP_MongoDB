@@ -115,3 +115,7 @@ function find_products_by_quantity($low_limit) {
     return $db->products->find(['quantity' => ['$lt' => (int)$low_limit]], ['sort' => ['quantity' => 1]])->toArray();
 }
 ?>
+
+
+
+

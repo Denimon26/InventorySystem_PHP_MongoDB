@@ -37,7 +37,7 @@ $collection = $db->users;
   }
 }
 ?>
-<?//php include_once('layouts/header.php'); ?>
+<?php include_once('layouts/header.php'); ?>
 <link rel="stylesheet" href="libs/css/main.css" />
 <div class="row">
    <div class="col-md-12">
@@ -83,15 +83,16 @@ $collection = $db->users;
            </td>
            <td><?php echo isset($a_user['last_login'])? read_date($a_user['last_login']):""?></td>
            <td class="text-center">
-             <div class="btn-group">
-                <a href="edit_user.php?id=<?php echo $user['_id']; ?>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Edit">Edit
-                  <i class="glyphicon glyphicon-pencil"></i>
-               </a>
-               <a href="delete_user.php?id=<?php echo $user['_id']; ?>" class="btn btn-xs btn-danger" data-toggle="tooltip" title="Remove">Remove
-                  <i class="glyphicon glyphicon-remove"></i>
-                </a>
-                </div>
-           </td>
+  <div class="btn-group">
+     <a href="edit_user.php?id=<?php echo $a_user['_id']; ?>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Edit">Edit
+       <i class="glyphicon glyphicon-pencil"></i>
+     </a>
+     <a href="delete_user.php?id=<?php echo $a_user['_id']; ?>" class="btn btn-xs btn-danger" data-toggle="tooltip" title="Remove">Remove
+       <i class="glyphicon glyphicon-remove"></i>
+     </a>
+  </div>
+</td>
+
           </tr>
         <?php endforeach;?>
        </tbody>

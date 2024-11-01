@@ -177,3 +177,4 @@ function fetchNotifications() {
 
 // Call fetchNotifications periodically (every 1 seconds)
 setInterval(fetchNotifications, 1000);
+

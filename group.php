@@ -78,10 +78,10 @@
            </td>
            <td class="text-center">
              <div class="btn-group">
-             <a href="edit_group.php?id=<?php echo $a_group['_id']; ?>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Edit">Edit                 
+             <a href="edit_group.php?id=<?php echo $a_group['group_name']; ?>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="Edit">Edit                 
              <i class="glyphicon glyphicon-pencil"></i>
                </a>
-                <a href="delete_group.php?id=<?php echo $a_group['_id'];?>" class="btn btn-xs btn-danger" data-toggle="tooltip" title="Remove">Remove
+                <a href="delete_group.php?id=<?php echo $a_group['group_name'];?>" class="btn btn-xs btn-danger" data-toggle="tooltip" title="Remove">Remove
                   <i class="glyphicon glyphicon-remove"></i>
                 </a>
                 </div>
