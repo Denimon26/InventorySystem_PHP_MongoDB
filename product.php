@@ -79,10 +79,10 @@ $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retr
                   <td class="text-center"> <?php echo read_date($product['date']); ?></td>
                   <td class="text-center">
                     <div class="btn-group">
-                      <a href="edit_product.php?id=<?php echo $product['_id'];?>" class="btn btn-xs btn-warning"  title="Edit" data-toggle="tooltip">Edit
+                      <a href="edit_product.php?id=<?php echo $product['name'];?>" class="btn btn-xs btn-warning"  title="Edit" data-toggle="tooltip">Edit
                         <span class="glyphicon glyphicon-edit"></span>
                       </a>
-                      <a href="delete_product.php?id=<?php echo $product['_id'];?>" class="btn btn-xs btn-danger"  title="Delete" data-toggle="tooltip">Delete
+                      <a href="delete_product.php?id=<?php echo $product['name'];?>" class="btn btn-xs btn-danger"  title="Delete" data-toggle="tooltip">Delete
                         <span class="glyphicon glyphicon-trash"></span>
                       </a>
                     </div>

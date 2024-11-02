@@ -65,7 +65,7 @@ if (isset($_POST['update'])) {
       //sucess
       $session->msg('s', "Group has been updated! ");
       echo "<script>console.log('done');</script>";
-      redirect('edit_group.php?id=' . (int) $e_group['id'], false);
+      redirect('group.php?id=' . (int) $e_group['id'], false);
     } else {
       //failed
       $session->msg('d', ' Sorry failed to updated Group!');

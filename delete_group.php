@@ -35,11 +35,7 @@ use MongoDB\Client;
   $groups = $database->selectCollection('group');
   $group_id = $_GET['id'];
   $group = $groups->deleteOne(['group_name' => $group_id]);
-  if($group){
       $session->msg("s","Group has been deleted.");
       redirect('group.php');
-  } else {
-      $session->msg("d","Group deletion failed Or Missing Prm.");
-      redirect('group.php');
-  }
+ 
 ?>

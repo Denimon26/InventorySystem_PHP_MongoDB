@@ -1,22 +1,40 @@
 <?php
   require_once('includes/load.php');
+  require 'vendor/autoload.php';
+
+  use MongoDB\Client;
+
   // Checkin What level user has permission to view this page
   page_require_level(2);
-?>
-<?php
-  $product = find_by_id('products',(int)$_GET['id']);
-  if(!$product){
-    $session->msg("d","Missing Product id.");
-    redirect('product.php');
+
+  function page_require_level($required_level)
+{
+  $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+  $client = new Client($uri);
+  $database = $client->selectDatabase('inventory_system');
+  $admins = $database->selectCollection('admin');
+  $admin = $admins->findOne(['_id' => $_SESSION['user_id']]);
+
+  if (!isset($admin)) {
+
+    redirect('index.php', false);
   }
-?>
-<?php
-  $delete_id = delete_by_id('products',(int)$product['id']);
-  if($delete_id){
-      $session->msg("s","Products deleted.");
-      redirect('product.php');
+  if ($admin['user_level'] <= (int) $required_level) {
+    return true;
   } else {
-      $session->msg("d","Products deletion failed.");
-      redirect('product.php');
+    // If the user does not have permission, redirect to the home page
+    redirect('home.php', false);
   }
+}
 ?>
+<?php
+$client = new MongoDB\Client('mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
+$db = $client->inventory_system;
+$product = $db->product; 
+  $prod = $_GET['id'];
+  $product->deleteOne(['name'=>$prod]);
+    $session->msg("s","Products deleted.");
+    redirect('product.php');
+
+?>
+
