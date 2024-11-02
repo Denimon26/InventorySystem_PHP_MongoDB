@@ -88,7 +88,7 @@ function page_require_level($required_level) {
     // Check if user is logged in and has permission to access the page
     if (!$current_user = current_user()) {
         // If the user is not logged in, redirect to login page
-        redirect('login.php', false);
+        redirect('index.php', false);
     }
     // Check the user's level against the required level for the page
     if ($current_user['user_level'] <= (int)$required_level) {

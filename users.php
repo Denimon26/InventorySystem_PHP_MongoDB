@@ -27,7 +27,7 @@ $collection = $db->users;
 
   if (!isset($admin)) {
 
-      redirect('login.php', false);
+      redirect('index.php', false);
   }
   if ($admin['user_level'] <= (int)$required_level) {
       return true;
