@@ -28,19 +28,19 @@ try {
             : (!empty($user) ? ucfirst($user['name']) : "Inventory Management System");
         ?>
     </title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker3.min.css"/>
     <link rel="stylesheet" href="libs/css/main.css"/>
     <style>
 #notif-img{
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   cursor: pointer;
 }
 #notification-count {
     top: 5px;
     right: 10px;
-    background: red;
     color: white;
     border-radius: 20px;
     padding: 2px 8px;
@@ -96,11 +96,11 @@ try {
                         <img src="uploads/users/<?php echo htmlspecialchars($user['image']); ?>" 
                              alt="user-image" class="img-circle img-inline">
                              <span>
-    <?php echo isset($user) ? ucfirst(remove_junk($user['name'])) : ""; ?> <i class="caret"></i>
-</span>
+                        <?php echo isset($user) ? ucfirst(remove_junk($user['name'])) : ""; ?> <i class="caret"></i>
+                    </span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="profile.php?id=<?php echo (int) $user['id']; ?>">
+                    <li><a href="profile.php?id=<?php echo isset($user['id']) ? (int) $user['id'] : 0; ?>">
                             <i class="glyphicon glyphicon-user"></i> Profile
                         </a></li>
                         <li><a href="edit_account.php" title="edit account">
@@ -125,7 +125,7 @@ try {
         } elseif ($user['user_level'] === '3') {
             include_once('user_menu.php');
         }
-    }
+    }   
     ?>
 </div>
 </div>

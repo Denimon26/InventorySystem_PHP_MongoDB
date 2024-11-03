@@ -109,7 +109,7 @@ if (isset($_POST['add_product'])) {
                        <i class="glyphicon glyphicon-ruble"></i>
                      </span>
                      <input type="number" class="form-control" name="buying-price" placeholder="Buying Price">
-                     <span class="input-group-addon">.00</span>
+                     <span class="input-group-addon"></span>
                   </div>
                  </div>
                </div>

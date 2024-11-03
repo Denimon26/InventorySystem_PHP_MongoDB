@@ -168,7 +168,7 @@ if (isset($_POST['product'])) {
                         <i class="glyphicon glyphicon-usd"></i>
                       </span>
                       <input type="number" class="form-control" name="buying-price" value="<?php echo remove_junk($product['buy_price']);?>">
-                      <span class="input-group-addon">.00</span>
+                      <span class="input-group-addon"></span>
                    </div>
                   </div>
                  </div>

@@ -52,7 +52,7 @@ $collection = $db->users;
           <span class="glyphicon glyphicon-th"></span>
           <span>Users</span>
        </strong>
-         <a href="add_user.php" class="btn btn-add-user">Add New User</a>
+         <a href="add_user.php" class="btn btn-primary">Add New User</a>
       </div>
      <div class="panel-body">
       <table class="table table-bordered table-striped">

@@ -74,7 +74,7 @@ use MongoDB\BSON\ObjectId;
 
 <a href="product.php" class="product-link">
     <div class="col-quarter">
-       <div class="panel panel-box clearfix">
+       <div class="panel-product panel-box clearfix">
          <div class="panel-icon bg-blue2">
           <i class="glyphicon glyphicon-shopping-cart"></i>
         </div>
