@@ -114,7 +114,7 @@ if (isset($_POST['add_product'])) {
                  </div>
                </div>
               </div>
-              <button type="submit" name="add_product" class="btn btn-danger">Add product</button>
+              <button type="submit" name="add_product" class="btn btn-primary">Add product</button>
           </form>
          </div>
         </div>
@@ -123,5 +123,5 @@ if (isset($_POST['add_product'])) {
   </div>
 
 <?php include_once('layouts/footer.php'); ?>
-?>
+
 

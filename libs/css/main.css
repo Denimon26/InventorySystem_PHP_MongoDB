@@ -176,7 +176,8 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   margin: 20px auto;
-  max-width: 600px;
+  max-width: 500px;
+  width: 100%;
 }
 
 .panel-heading-form {
@@ -272,6 +273,17 @@ body {
   height: 65px;
   line-height: 65px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Slightly darker shadow */
+  display: flex;
+}
+
+.header-content{
+  display: flex;
+  align-items: center;
+}
+
+.header-notif{
+  display: flex;
+  align-items: center;
 }
 
 header > .logo {
@@ -290,6 +302,7 @@ header > .logo {
   color: #f8f9fa; /* Light color for better contrast */
   margin-left: 20px;
 }
+
 
 .info-menu{
   height: 60px;
@@ -427,8 +440,8 @@ header > .logo {
   justify-content: center;
   align-items: center;
   width: 100%;
-  max-width: 400px;
-  height: 100vh; /* Full viewport height */
+  max-width: 600px;
+  height: 70vh; /* Full viewport height */
   margin: 0 auto; /* Center horizontally */
   padding: 40px;
   background-color: #ffffff;
@@ -473,7 +486,6 @@ form.clearfix {
 }
 
 .row {
-  display: flex;
   flex-wrap: wrap;
   gap: 15px;
   margin: 0;

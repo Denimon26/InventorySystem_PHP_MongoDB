@@ -28,7 +28,7 @@ try {
             : (!empty($user) ? ucfirst($user['name']) : "Inventory Management System");
         ?>
     </title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker3.min.css"/>
     <link rel="stylesheet" href="libs/css/main.css"/>
     <style>
@@ -63,30 +63,6 @@ try {
         <div class="header-date pull-left">
             <strong><?php echo date("F j, Y, g:i a"); ?></strong>
         </div>
-        <div class="pull-right clearfix">
-            <ul class="info-menu list-inline list-unstyled">
-                <li class="profile">
-                    <a href="#" data-toggle="dropdown" class="toggle" aria-expanded="false">
-                        <img src="uploads/users/<?php echo htmlspecialchars($user['image']); ?>" 
-                             alt="user-image" class="img-circle img-inline">
-                             <span>
-    <?php echo isset($user) ? ucfirst(remove_junk($user['name'])) : ""; ?> <i class="caret"></i>
-</span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="profile.php?id=<?php echo (int) $user['id']; ?>">
-                            <i class="glyphicon glyphicon-user"></i> Profile
-                        </a></li>
-                        <li><a href="edit_account.php" title="edit account">
-                            <i class="glyphicon glyphicon-cog"></i> Settings
-                        </a></li>
-                        <li class="last"><a href="logout.php">
-                            <i class="glyphicon glyphicon-off"></i> Logout
-                        </a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
         <div class="header-notif pull-right">
             <button class="notification-btn" id="notification-btn" data-toggle="dropdown" aria-expanded="false">
                 <span id="notification-count"><?php echo $notification_count; ?></span>
@@ -113,6 +89,30 @@ try {
                 <?php endif; ?>
             </ul>
         </div>
+        <div class="pull-right clearfix">
+            <ul class="info-menu list-inline list-unstyled">
+                <li class="profile">
+                    <a href="#" data-toggle="dropdown" class="toggle" aria-expanded="false">
+                        <img src="uploads/users/<?php echo htmlspecialchars($user['image']); ?>" 
+                             alt="user-image" class="img-circle img-inline">
+                             <span>
+    <?php echo isset($user) ? ucfirst(remove_junk($user['name'])) : ""; ?> <i class="caret"></i>
+</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="profile.php?id=<?php echo (int) $user['id']; ?>">
+                            <i class="glyphicon glyphicon-user"></i> Profile
+                        </a></li>
+                        <li><a href="edit_account.php" title="edit account">
+                            <i class="glyphicon glyphicon-cog"></i> Settings
+                        </a></li>
+                        <li class="last"><a href="logout.php">
+                            <i class="glyphicon glyphicon-off"></i> Logout
+                        </a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
 </header>
 
@@ -136,7 +136,7 @@ try {
     <!-- Page content goes here -->
   </div>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 </body>

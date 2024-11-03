@@ -2,9 +2,9 @@
   $page_title = 'All categories';
   require_once('includes/load.php');
   // Checkin What level user has permission to view this page
-  page_require_level(1);
+  //page_require_level(1);
   
-  $all_categories = find_all('categories')
+  //$all_categories = find_all('categories')
 ?>
 <?php
  if(isset($_POST['add_cat'])){
@@ -28,6 +28,7 @@
  }
 ?>
 <?php //include_once('layouts/header.php'); ?>
+<link rel="stylesheet" href="libs/css/main.css" />
 
   <div class="row">
      <div class="col-md-12">

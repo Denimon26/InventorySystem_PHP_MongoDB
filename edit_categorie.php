@@ -36,6 +36,7 @@ if(isset($_POST['edit_cat'])){
 }
 ?>
 <?php //include_once('layouts/header.php'); ?>
+<link rel="stylesheet" href="libs/css/main.css" />
 
 <div class="row">
    <div class="col-md-12">

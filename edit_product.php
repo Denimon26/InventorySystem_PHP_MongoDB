@@ -102,6 +102,7 @@ if (isset($_POST['product'])) {
 ?>
 
 <?php //include_once('layouts/header.php'); ?>
+<link rel="stylesheet" href="libs/css/main.css" />
 <div class="row">
   <div class="col-md-12">
     <?php echo display_msg($msg); ?>
@@ -173,7 +174,7 @@ if (isset($_POST['product'])) {
                  </div>
                </div>
               </div>
-              <button type="submit" name="product" class="btn btn-danger">Update</button>
+              <button type="submit" name="product" class="btn btn-primary">Update</button>
           </form>
          </div>
         </div>
