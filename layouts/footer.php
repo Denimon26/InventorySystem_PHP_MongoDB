@@ -9,7 +9,10 @@
         </div>
         <div class="footer-notif">
             <span>Follow Us:</span>
-            <a href="#"><img src="path/to/facebook-icon.png" alt="Facebook"></a>
+            <a href="https://www.facebook.com/groups/572425506531311/" target="_blank">
+    <img src="pictures/facebook.png" id="img-fb" alt="Facebook">
+</a>
+
         </div>
     </div>
 </footer>

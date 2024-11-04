@@ -35,7 +35,7 @@ if(isset($_POST['edit_cat'])){
   }
 }
 ?>
-<?php //include_once('layouts/header.php'); ?>
+<?php include_once('layouts/header.php'); ?>
 <link rel="stylesheet" href="libs/css/main.css" />
 
 <div class="row">
@@ -64,4 +64,4 @@ if(isset($_POST['edit_cat'])){
 
 
 
-<?php //include_once('layouts/footer.php'); ?>
+<?php include_once('layouts/footer.php'); ?>

@@ -125,7 +125,7 @@ if (empty($errors)) {
 }
 
 ?>
-<?php //include_once('layouts/header.php'); ?>
+<?php include_once('layouts/header.php'); ?>
 <link rel="stylesheet" href="libs/css/main.css" />
 <div class="row">
   <div class="col-md-12"> <?php echo display_msg($msg); ?> </div>
@@ -196,4 +196,4 @@ if (empty($errors)) {
   </div>
 
  </div>
-<?php //include_once('layouts/footer.php'); ?>
+<?php include_once('layouts/footer.php'); ?>

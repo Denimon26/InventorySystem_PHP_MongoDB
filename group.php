@@ -33,7 +33,7 @@
     }
   }
 ?>
-<?php //include_once('layouts/header.php'); ?>
+<?php include_once('layouts/header.php'); ?>
 <link rel="stylesheet" href="libs/css/main.css" />
 <div class="row">
    <div class="col-md-12">
@@ -48,7 +48,7 @@
         <span class="glyphicon glyphicon-th"></span>
         <span>Groups</span>
      </strong>
-       <a href="add_group.php" class="btn btn-add-user">Add New Group</a>
+       <a href="add_group.php" class="btn btn-primary">Add New Group</a>
     </div>
      <div class="panel-body">
       <table class="table table-bordered">
@@ -94,4 +94,4 @@
     </div>
   </div>
 </div>
-  <?php //include_once('layouts/footer.php'); ?>
+  <?php include_once('layouts/footer.php'); ?>
