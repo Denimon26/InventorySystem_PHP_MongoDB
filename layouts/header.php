@@ -115,19 +115,6 @@ try {
         </div>
     </div>
 </header>
-
-<div class="sidebar">
-    <?php
-    if(isset($user)) {
-        echo "User Level: " . $user['user_level']; // Debug line to check user level
-        if ($user['user_level'] === '1') {
-            include_once('admin_menu.php');
-        } elseif ($user['user_level'] === '3') {
-            include_once('user_menu.php');
-        }
-    }   
-    ?>
-</div>
 </div>
 <?php endif; ?>
 

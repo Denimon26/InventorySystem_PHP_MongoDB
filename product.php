@@ -33,6 +33,7 @@ $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retr
   $products = $products2->find();
 ?>
 <?php include_once('layouts/header.php'); ?>
+<?php include_once('layouts/admin_menu.php'); ?>
 <link rel="stylesheet" href="libs/css/main.css" />
   <div class="row">
      <div class="col-md-12">

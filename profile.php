@@ -15,13 +15,13 @@
   page_require_level(3);
 
   // Get user ID from GET request
-  //$user_id = $_GET['_id'] ?? null;
-  //if (empty($user_id)) {
-  //  redirect('home.php', false);
-  //} else {
-    // Find the user by ObjectId
-  //  $user_p = $collection->findOne(['_id' => new ObjectId($user_id)]);
-  //}
+  $user_id = $_GET['_id'] ?? null;
+  if (empty($user_id)) {
+    redirect('home.php', false);
+  } else {
+     //Find the user by ObjectId
+    $user_p = $collection->findOne(['_id' => new ObjectId($user_id)]);
+  }
 
   function page_require_level($required_level) {
     $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';

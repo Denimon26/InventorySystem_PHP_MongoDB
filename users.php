@@ -38,6 +38,7 @@ $collection = $db->users;
 }
 ?>
 <?php include_once('layouts/header.php'); ?>
+<?php include_once('layouts/admin_menu.php'); ?>
 <link rel="stylesheet" href="libs/css/main.css" />
 <div class="row">
    <div class="col-md-12">

@@ -1,41 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Sidebar Menu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<ul>
-  <li>
-    <a href="admin.php">
-      <i class="glyphicon glyphicon-home"></i>
-      <span>Dashboard</span>
-    </a>
-  </li>
-  <li>
-    <a href="#" class="submenu-toggle">
-      <i class="glyphicon glyphicon-user"></i>
-      <span>User Management</span>
-    </a>
-    <ul class="nav submenu">
-      <li><a href="group.php">Manage Groups</a> </li>
-      <li><a href="users.php">Manage Users</a> </li>
-   </ul>
-  </li>
-  <li>
-    <a href="categorie.php" >
-      <i class="glyphicon glyphicon-indent-left"></i>
-      <span>Categories</span>
-    </a>
-  </li>
-  <li>
-    <a href="#" class="submenu-toggle">
-      <i class="glyphicon glyphicon-th-large"></i>
-      <span>Products</span>
-    </a>
-    <ul class="nav submenu">
-       <li><a href="product.php">Manage Products</a> </li>
-       <li><a href="add_product.php">Add Products</a> </li>
-   </ul>
-  </li>
-  <li>
-    <a href="reviews.php" >
-      <i class="glyphicon glyphicon-indent-left"></i>
-      <span>Reviews</span>
-    </a>
-  </li>
-</ul>
+        body {
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+            transition: margin-left 0.3s;
+        }
+
+        /* Sidebar */
+        #sidePanel {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            padding-top: 60px;
+            transition: width 0.3s;
+            z-index: 1000; /* Higher z-index to overlay content */
+        }
+
+        #sidePanel a {
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #fff;
+            display: block;
+            transition: background-color 0.3s;
+        }
+
+        #sidePanel a:hover {
+            background-color: #333;
+        }
+
+        #sidePanel .icon {
+            margin-right: 10px;
+        }
+
+        /* Toggle Button */
+        .menu-btn {
+            font-size: 26px;
+            cursor: pointer;
+            background-color: #111;
+            color: white;
+            border: none;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1001; /* Higher z-index for button to stay on top */
+            border-radius: 4px;
+            padding: 4px;
+        }
+
+        /* Shift content when sidebar is open */
+        .content-shift {
+            margin-left: 250px; /* Matches sidebar width */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toggle Button -->
+    <button class="menu-btn" onclick="togglePanel()">&#9776;</button>
+
+    <!-- Sidebar -->
+    <div id="sidePanel">
+        <a href="admin.php"><i class="fas fa-tachometer-alt icon"></i>Dashboard</a>
+        <a href="product.php"><i class="fas fa-box icon"></i>Product</a>
+        <a href="categorie.php"><i class="fas fa-tags icon"></i>Category</a>
+        <a href="users.php"><i class="fas fa-user icon"></i>Users</a>
+        <a href="group.php"><i class="fas fa-users icon"></i>Group</a>
+        <a href="sales_report.php"><i class="fas fa-chart-line icon"></i>Sales</a>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" style="padding: 20px;">
+    </div>
+
+    <script>
+        function togglePanel() {
+            const panel = document.getElementById("sidePanel");
+            const mainContent = document.getElementById("mainContent");
+
+            if (panel.style.width === "250px") {
+                panel.style.width = "0";
+                mainContent.classList.remove("content-shift");
+            } else {
+                panel.style.width = "250px";
+                mainContent.classList.add("content-shift");
+            }
+        }
+    </script>
+
+</body>
+</html>

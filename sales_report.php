@@ -89,6 +89,7 @@ $monthly_sales = $sales_collection->aggregate([
 ?>
 
 <?php include_once('layouts/header.php'); ?>
+<?php include_once('layouts/admin_menu.php'); ?>
 
 <link rel="stylesheet" href="libs/css/main.css" />
 

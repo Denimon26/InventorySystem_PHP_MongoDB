@@ -95,6 +95,7 @@ if (isset($_POST['add'])) {
 }
 ?>
 <?php //include_once('layouts/header.php'); ?>
+<?php include_once('layouts/admin_menu.php'); ?>
 <link rel="stylesheet" href="libs/css/main.css" />
 <?php echo display_msg($msg); ?>
 <div class="login-page">
@@ -132,5 +133,3 @@ if (isset($_POST['add'])) {
   </div>
 </div>
 </div>
-
-<?php include_once('layouts/footer.php'); ?>

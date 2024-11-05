@@ -60,6 +60,7 @@ use MongoDB\BSON\ObjectId;
   $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
   ?>
   <?php include_once('layouts/header.php'); ?>
+  <?php include_once('layouts/admin_menu.php'); ?>
   <link rel="stylesheet" href="libs/css/main.css" />
 
 <div class="row">

@@ -2,23 +2,26 @@
   use MongoDB\Client;
   require 'vendor/autoload.php';
   require_once('includes/load.php');
-  //require_once('includes/sql.php');
+
   if (property_exists($session, 'message') && str_contains($session->message, 'admin')) {
     echo '<script>console.log('.json_encode($session).')</script>';
-    //redirect('index.php', false);
   }
+
   $page_title = 'Home Page';
 
-  
   $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
-$client = new Client($uri);
-$database = $client->selectDatabase('inventory_system');
-$product=$database->selectCollection('product');
-$categories=$database->selectCollection('categories');
-  $all_products = $product->find();
-  $all_categories =  $categories->find();
+  $client = new Client($uri);
+  $database = $client->selectDatabase('inventory_system');
+  $product = $database->selectCollection('product');
+  $categories = $database->selectCollection('categories');
 
+  $all_products = $product->find();
+  $all_categories = $categories->find();
+
+  // Get selected category from dropdown
+  $selected_category = isset($_POST['category']) ? $_POST['category'] : '';
 ?>
+
 <?php include_once('layouts/header.php'); ?>
 <link rel="stylesheet" href="libs/css/main.css" />
 <div class="row">
@@ -37,6 +40,23 @@ $categories=$database->selectCollection('categories');
         </strong>
       </div>
       <div class="panel-body">
+        
+        <!-- Category Selection Form -->
+        <form method="POST" action="">
+          <div class="form-group">
+            <label for="category">Filter by Category:</label>
+            <select name="category" id="category" class="form-control" onchange="this.form.submit()">
+              <option value="">All Categories</option>
+              <?php foreach ($all_categories as $category): ?>
+                <option value="<?php echo $category['name']; ?>" <?php if ($category['name'] === $selected_category) echo 'selected'; ?>>
+                  <?php echo $category['name']; ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+        </form>
+
+        <!-- Products Table -->
         <table class="table table-bordered">
           <thead>
             <tr>
@@ -48,12 +68,14 @@ $categories=$database->selectCollection('categories');
           </thead>
           <tbody>
             <?php foreach ($all_products as $product): ?>
-              <tr>
-                <td><?php echo remove_junk($product['name']); ?></td>
-                <td><?php echo remove_junk($product['categories']); ?></td> 
-                <td><?php echo number_format($product['buy_price'], 2); ?> $</td>
-                <td><?php echo $product['quantity']; ?></td>
-              </tr>
+              <?php if ($selected_category === '' || $product['categories'] === $selected_category): ?>
+                <tr>
+                  <td><?php echo remove_junk($product['name']); ?></td>
+                  <td><?php echo remove_junk($product['categories']); ?></td>
+                  <td><?php echo number_format($product['buy_price'], 2); ?> $</td>
+                  <td><?php echo $product['quantity']; ?></td>
+                </tr>
+              <?php endif; ?>
             <?php endforeach; ?>
           </tbody>
         </table>

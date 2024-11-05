@@ -81,12 +81,20 @@ if (isset($_POST['update'])) {
 }
 ?>
 <?php //include_once('layouts/header.php'); ?>
+<?php include_once('layouts/admin_menu.php'); ?>
 <link rel="stylesheet" href="libs/css/main.css" />
 <div class="login-page">
-  <div class="text-center">
-    <h3>Edit Group</h3>
+  <div class="panel-form">
+    <div class="panel-heading-form">
+      <strong>
+      <span class="glyphicon glyphicon-th"></span>
+      <span>Edit Group</span>
+      </strong>
+    </div>
   </div>
   <?php echo display_msg($msg); ?>
+  <div class="panel-body">
+  <div class="col-md-6">
   <form method="post" action="edit_group.php?id=<?php echo $_GET['id'] ?>">
     <div class="form-group">
       <label for="name" class="control-label">Group Name</label>
@@ -107,9 +115,9 @@ if (isset($_POST['update'])) {
       </select>
     </div>
     <div class="form-group clearfix">
-      <button type="submit" name="update" class="btn btn-info">Update</button>
+      <button type="submit" name="update" class="btn btn-primary">Update</button>
     </div>
   </form>
+  </div>
+  </div>
 </div>
-
-<?php include_once('layouts/footer.php'); ?>
