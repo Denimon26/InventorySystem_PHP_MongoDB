@@ -72,9 +72,8 @@
                 <tr>
                   <td><?php echo remove_junk($product['name']); ?></td>
                   <td><?php echo remove_junk($product['categories']); ?></td>
-                  <td><?php echo number_format($product['buy_price'], 2); ?> $</td>
-                  <td><?php echo $product['quantity']; ?></td>
-                </tr>
+                  <td>₱ <?php echo number_format($product['buy_price'], 2); ?> 
+                  <td><?php echo remove_junk($product['quantity']); ?></td>
               <?php endif; ?>
             <?php endforeach; ?>
           </tbody>

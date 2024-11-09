@@ -163,7 +163,7 @@ if (isset($_POST['product'])) {
                  </div>
                  <div class="col-md-4">
                   <div class="form-group">
-                    <label for="qty">Buying price</label>
+                    <label for="qty">Price</label>
                     <div class="input-group">
                       <span class="input-group-addon">
                         <i class="glyphicon glyphicon-usd"></i>

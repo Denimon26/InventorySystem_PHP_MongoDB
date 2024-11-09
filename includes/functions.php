@@ -72,12 +72,16 @@ function redirect($url, $permanent = false)
 /*--------------------------------------------------------------*/
 /* Function for Readable date time
 /*--------------------------------------------------------------*/
-function read_date($str){
-     if($str)
-      return date('F j, Y, g:i:s a', strtotime($str));
-     else
-      return null;
+function read_date($date) {
+  // Check if the date is valid
+  if ($date instanceof MongoDB\BSON\UTCDateTime) {
+      // Convert MongoDB UTCDateTime to PHP DateTime
+      $phpDate = $date->toDateTime();
+      return $phpDate->format('Y-m-d H:i:s'); // Change format as needed
   }
+  return 'Invalid date';
+}
+
 /*--------------------------------------------------------------*/
 /* Function for  Readable Make date time
 /*--------------------------------------------------------------*/
