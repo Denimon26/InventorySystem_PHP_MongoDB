@@ -1,7 +1,9 @@
 <?php
-  ob_start();
-  require_once('includes/load.php');
-  if($session->isUserLoggedIn(true)) { redirect('home.php', false);}
+ob_start();
+require_once('includes/load.php');
+if ($session->isUserLoggedIn(true)) {
+  redirect('home.php', false);
+}
 ?>
 <link rel="stylesheet" href="libs/css/main.css" />
 <?php echo display_msg($msg); ?>
@@ -10,7 +12,7 @@
     <div class="panel-heading-form">
       <strong>
         <span class="glyphicon glyphicon-user"></span>
-        <span>Login</span>
+        <span>Loginn</span>
       </strong>
     </div>
     <div class="panel-body">
@@ -32,5 +34,3 @@
     </div>
   </div>
 </div>
-
-
