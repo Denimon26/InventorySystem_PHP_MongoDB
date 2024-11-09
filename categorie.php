@@ -39,23 +39,26 @@
   if (isset($_POST['add_cat'])) {
     $req_field = array('categorie-name');
     validate_fields($req_field);
-    $cat_name = remove_junk($db->escape($_POST['categorie-name']));
+    
+    // Use trim to clean the input
+    $cat_name = trim($_POST['categorie-name']);
 
     if (empty($errors)) {
-      // Insert new category into MongoDB
-      $result = $categoriesCollection->insertOne(['name' => $cat_name]);
-      if ($result->getInsertedCount() > 0) {
-        $session->msg("s", "Successfully Added New Category");
-        redirect('categorie.php', false);
-      } else {
-        $session->msg("d", "Sorry, failed to insert.");
-        redirect('categorie.php', false);
-      }
+        // Insert new category into MongoDB
+        $result = $categoriesCollection->insertOne(['name' => $cat_name]);
+        if ($result->getInsertedCount() > 0) {
+            $session->msg("s", "Successfully Added New Category");
+            redirect('categorie.php', false);
+        } else {
+            $session->msg("d", "Sorry, failed to insert.");
+            redirect('categorie.php', false);
+        }
     } else {
-      $session->msg("d", $errors);
-      redirect('categorie.php', false);
+        $session->msg("d", $errors);
+        redirect('categorie.php', false);
     }
-  }
+}
+
 ?>
 <?php include_once('layouts/header.php'); ?>
 <?php include_once('layouts/admin_menu.php'); ?>

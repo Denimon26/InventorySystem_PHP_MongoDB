@@ -7,7 +7,7 @@
     use MongoDB\Client;
 use MongoDB\BSON\ObjectId;
     // Checkin What level user has permission to view this page
-    page_require_level(1);
+    page_require_level(3);
    
     function page_require_level($required_level) {
       $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
@@ -87,51 +87,72 @@ use MongoDB\BSON\ObjectId;
     </div>
 </a>
 
-  <div class="col-third">
+<div class="col-third">
     <div class="panel panel-default">
-      <div class="panel-heading">
-        <strong>
-          <span class="glyphicon glyphicon-th-list"></span>
-          <span>Low Quantity Products</span>
-        </strong>
-      </div>
-      <div class="panel-body">
-        <form method="get" action="">
-          <label for="filter">Filter by:</label>
-          <select name="filter" id="filter" class="form-control" onchange="this.form.submit()">
-            <option value="all" <?php if($filter == 'all') echo 'selected'; ?>>All</option>
-            <option value="critical" <?php if($filter == 'critical') echo 'selected'; ?>>Critical</option>
-            <option value="low" <?php if($filter == 'low') echo 'selected'; ?>>Low</option>
-          </select>
-        </form>
-        
-        <ul class="list-group">
-          <?php
-          $quantities = array_column($products_by_quantity, 'quantity');
-          array_multisort($quantities, SORT_ASC, $products_by_quantity);
+        <div class="panel-heading">
+            <strong>
+                <span class="glyphicon glyphicon-th-list"></span>
+                <span>Low Quantity Products</span>
+            </strong>
+        </div>
+        <div class="panel-body">
+            <form method="get" action="">
+                <label for="filter">Filter by:</label>
+                <select name="filter" id="filter" class="form-control" onchange="this.form.submit()">
+                    <option value="all" <?php if($filter == 'all') echo 'selected'; ?>>All</option>
+                    <option value="critical" <?php if($filter == 'critical') echo 'selected'; ?>>Critical</option>
+                    <option value="low" <?php if($filter == 'low') echo 'selected'; ?>>Low</option>
+                </select>
+            </form>
+            
+            <ul class="list-group">
+                <?php
+                // MongoDB connection
+                $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+                $client = new Client($uri);
+                $database = $client->selectDatabase('inventory_system');
+                $products2 = $database->selectCollection('product');
 
-          foreach ($products_by_quantity as $product):
-            $quantity = $product['quantity'];
-            $is_critical = ($quantity < 20);
-            $is_low = ($quantity < $low_limit && $quantity >= 20);
+                // Fetch products based on selected filter
+                $products_query = [];
+                if ($filter === 'critical') {
+                    $products_query = ['quantity' => ['$lt' => 20]];
+                } elseif ($filter === 'low') {
+                    $products_query = ['quantity' => ['$gte' => 20, '$lt' => $low_limit]];
+                } else {
+                    $products_query = ['quantity' => ['$lt' => $low_limit]];
+                }
 
-            if ($filter == 'critical' && !$is_critical) continue;
-            if ($filter == 'low' && !$is_low) continue;
-          ?>
-            <li class="list-group-item">
-              <span class="badge"><?php echo $quantity; ?></span>
-              <?php echo remove_junk($product['name']); ?>
-              <?php if ($is_critical): ?>
-                <span class="label label-danger pull-right">Critical</span>
-              <?php elseif ($is_low): ?>
-                <span class="label label-warning pull-right">Low</span>
-              <?php endif; ?>
-            </li>
-          <?php endforeach; ?>
-        </ul>
-      </div>
+                $products_by_quantity = $products2->find($products_query, ['sort' => ['quantity' => 1]])->toArray();
+
+                // Display the products
+                if (empty($products_by_quantity)) {
+                    echo "<li class='list-group-item'>No products found</li>";
+                } else {
+                    foreach ($products_by_quantity as $prod) {
+                        $quantity = $prod['quantity'];
+                        $is_critical = ($quantity < 20);
+                        $is_low = ($quantity < $low_limit && $quantity >= 20);
+                        ?>
+                        <li class="list-group-item">
+                            <span class="badge"><?php echo $quantity; ?></span>
+                            <?php echo htmlspecialchars($prod['name']); ?>
+                            <?php if ($is_critical): ?>
+                                <span class="label label-danger pull-right">Critical</span>
+                            <?php elseif ($is_low): ?>
+                                <span class="label label-warning pull-right">Low</span>
+                            <?php endif; ?>
+                        </li>
+                        <?php
+                    }
+                }
+                ?>
+            </ul>
+        </div>
     </div>
-  </div>
+</div>
+
+
 
   <div class="col-third">
     <div class="panel panel-default">

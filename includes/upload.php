@@ -161,20 +161,31 @@ class  Media {
       return ($result && $db->affected_rows() === 1 ? true : false);
 
    }
+
+   function find_by_id($collectionName, $id) {
+    global $db; // Assuming $db is your MongoDB connection
+    $collection = $db->$collectionName;
+    return $collection->findOne(['_id' => $id]);
+}
+
  /*--------------------------------------------------------------*/
  /* Function for Delete old image
  /*--------------------------------------------------------------*/
-  public function user_image_destroy($id){
-     $image = find_by_id('users',$id);
-     if($image['image'] === 'no_image.png')
-     {
-       return true;
-     } else {
-       unlink($this->userPath.'/'.$image['image']);
-       return true;
-     }
+ public function user_image_destroy($id) {
+  global $db; // Ensure $db is your MongoDB database instance
+  $collection = $db->selectCollection('users'); // Explicitly select the 'users' collection
 
-   }
+  $image = $collection->findOne(['_id' => $id]);
+
+  if ($image && isset($image['image']) && $image['image'] !== 'no_image.png') {
+      unlink($this->userPath . '/' . $image['image']);
+      return true;
+  } else {
+      return true; // Return true even if image is 'no_image.png'
+  }
+}
+
+
 /*--------------------------------------------------------------*/
 /* Function for insert media image
 /*--------------------------------------------------------------*/

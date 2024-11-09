@@ -55,7 +55,7 @@ $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retr
                   <th> Product Title </th>
                   <th class="text-center" style="width: 10%;"> Categories </th>
                   <th class="text-center" style="width: 10%;"> In-Stock </th>
-                  <th class="text-center" style="width: 10%;"> Buying Price </th>
+                  <th class="text-center" style="width: 10%;"> Price </th>
                   <th class="text-center" style="width: 10%;"> EOQ </th>
                   <th class="text-center" style="width: 10%;"> Product Added </th>
                   <th class="text-center" style="width: 100px;"> Actions </th>
@@ -75,7 +75,7 @@ $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retr
                   <td> <?php echo remove_junk($product['name']); ?></td>
                   <td class="text-center"> <?php echo remove_junk($product['categories']); ?></td>
                   <td class="text-center"> <?php echo remove_junk($product['quantity']); ?></td>
-                  <td class="text-center"> <?php echo remove_junk($product['buy_price']); ?></td>
+                  <td class="text-center">₱ <?php echo remove_junk($product['buy_price']); ?></td>
                   <td class="text-center"> <?php echo remove_junk($product['eoq']); ?></td>
                   <td class="text-center"> <?php echo read_date($product['date']); ?></td>
                   <td class="text-center">
