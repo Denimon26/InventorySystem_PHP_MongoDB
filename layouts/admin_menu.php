@@ -82,7 +82,7 @@
         <a href="categorie.php"><i class="fas fa-tags icon"></i>Category</a>
         <a href="users.php"><i class="fas fa-user icon"></i>Users</a>
         <a href="group.php"><i class="fas fa-users icon"></i>Group</a>
-        <a href="sales_report.php"><i class="fas fa-chart-line icon"></i>Sales</a>
+        <a href="sales_report.php"><i class="fas fa-chart-line icon"></i>Sales Report</a>
     </div>
 
     <!-- Main Content -->
