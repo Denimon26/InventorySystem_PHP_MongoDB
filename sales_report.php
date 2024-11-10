@@ -5,6 +5,7 @@ require 'vendor/autoload.php';
 
 use MongoDB\Client;
 use MongoDB\BSON\UTCDateTime;
+use MongoDB\BSON\ObjectId;
 
 // Check permission level
 page_require_level(1);
@@ -14,16 +15,14 @@ function page_require_level($required_level) {
     $client = new Client($uri);
     $database = $client->selectDatabase('inventory_system');
     $admins = $database->selectCollection('admin');
-    $admin=  $admins->findOne(['_id' => $_SESSION['user_id']]);
+    $admin = $admins->findOne(['_id' => $_SESSION['user_id']]);
 
     if (!isset($admin)) {
-
         redirect('index.php', false);
     }
     if ($admin['user_level'] <= (int)$required_level) {
         return true;
     } else {
-        // If the user does not have permission, redirect to the home page
         redirect('home.php', false);
     }
 }
@@ -33,6 +32,7 @@ $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retr
 $client = new Client($uri);
 $database = $client->selectDatabase('inventory_system');
 $sales_collection = $database->selectCollection('sales');
+$product_collection = $database->selectCollection('product');
 
 // Helper function to get start and end dates
 function getDateRange($period) {
@@ -51,7 +51,7 @@ function getDateRange($period) {
 }
 
 // Fetch weekly and monthly sales data
-$weekly_sales = $sales_collection->aggregate([
+$weekly_sales_cursor = $sales_collection->aggregate([
     [
         '$match' => [
             'sale_date' => [
@@ -63,13 +63,13 @@ $weekly_sales = $sales_collection->aggregate([
     [
         '$group' => [
             '_id' => '$product_id',
-            'total_sold' => ['$sum' => '$quantity'],
-            'total_amount' => ['$sum' => ['$multiply' => ['$quantity', '$price']]]
+            'total_sold' => ['$sum' => '$quantity_sold'],
+            'total_amount' => ['$sum' => '$total_price']
         ]
     ]
 ]);
 
-$monthly_sales = $sales_collection->aggregate([
+$monthly_sales_cursor = $sales_collection->aggregate([
     [
         '$match' => [
             'sale_date' => [
@@ -81,11 +81,32 @@ $monthly_sales = $sales_collection->aggregate([
     [
         '$group' => [
             '_id' => '$product_id',
-            'total_sold' => ['$sum' => '$quantity'],
-            'total_amount' => ['$sum' => ['$multiply' => ['$quantity', '$price']]]
+            'total_sold' => ['$sum' => '$quantity_sold'],
+            'total_amount' => ['$sum' => '$total_price']
         ]
     ]
 ]);
+
+// Convert cursors to arrays
+$weekly_sales = iterator_to_array($weekly_sales_cursor);
+$monthly_sales = iterator_to_array($monthly_sales_cursor);
+
+// Fetch product names for display
+function getProductNames($product_ids, $product_collection) {
+    $product_names = [];
+    $products = $product_collection->find(['_id' => ['$in' => array_map(function($id) { return new ObjectId($id); }, $product_ids)]]);
+    foreach ($products as $product) {
+        $product_names[(string)$product['_id']] = $product['name'];
+    }
+    return $product_names;
+}
+
+// Gather unique product IDs for both weekly and monthly sales
+$product_ids = array_unique(array_merge(
+    array_map(fn($sale) => (string)$sale['_id'], $weekly_sales),
+    array_map(fn($sale) => (string)$sale['_id'], $monthly_sales)
+));
+$product_names = getProductNames($product_ids, $product_collection);
 ?>
 
 <?php include_once('layouts/header.php'); ?>
@@ -110,7 +131,7 @@ $monthly_sales = $sales_collection->aggregate([
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>Product ID</th>
+                            <th>Product Name</th>
                             <th>Total Sold</th>
                             <th>Total Amount</th>
                         </tr>
@@ -118,9 +139,9 @@ $monthly_sales = $sales_collection->aggregate([
                     <tbody>
                         <?php foreach ($weekly_sales as $sale): ?>
                             <tr>
-                                <td><?php echo $sale['_id']; ?></td>
+                                <td><?php echo isset($product_names[(string)$sale['_id']]) ? $product_names[(string)$sale['_id']] : 'Unknown Product'; ?></td>
                                 <td><?php echo $sale['total_sold']; ?></td>
-                                <td><?php echo number_format($sale['total_amount'], 2); ?></td>
+                                <td>₱ <?php echo number_format($sale['total_amount'], 2); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -139,7 +160,7 @@ $monthly_sales = $sales_collection->aggregate([
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>Product ID</th>
+                            <th>Product Name</th>
                             <th>Total Sold</th>
                             <th>Total Amount</th>
                         </tr>
@@ -147,9 +168,9 @@ $monthly_sales = $sales_collection->aggregate([
                     <tbody>
                         <?php foreach ($monthly_sales as $sale): ?>
                             <tr>
-                                <td><?php echo $sale['_id']; ?></td>
+                                <td><?php echo isset($product_names[(string)$sale['_id']]) ? $product_names[(string)$sale['_id']] : 'Unknown Product'; ?></td>
                                 <td><?php echo $sale['total_sold']; ?></td>
-                                <td><?php echo number_format($sale['total_amount'], 2); ?></td>
+                                <td>₱ <?php echo number_format($sale['total_amount'], 2); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
