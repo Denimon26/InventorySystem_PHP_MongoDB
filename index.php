@@ -12,7 +12,7 @@ if ($session->isUserLoggedIn(true)) {
     <div class="panel-heading-form">
       <strong>
         <span class="glyphicon glyphicon-user"></span>
-        <span>Loginn</span>
+        <span>Login</span>
       </strong>
     </div>
     <div class="panel-body">
