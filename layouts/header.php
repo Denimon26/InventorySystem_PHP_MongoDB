@@ -42,13 +42,12 @@ try {
     error_log("Error checking critical stock products: " . $e->getMessage());
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>
-        <?php echo !empty($page_title) ? remove_junk($page_title) : "Inventory Management System"; ?>
-    </title>
+    <title><?php echo !empty($page_title) ? remove_junk($page_title) : "Inventory Management System"; ?></title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="libs/css/main.css"/>
@@ -67,43 +66,45 @@ try {
         <div class="header-date pull-left">
             <strong><?php echo date("F j, Y, g:i a"); ?></strong>
         </div>
+        
+        <!-- Notification Section -->
         <div class="header-notif pull-right">
-    <button class="notification-btn" id="notification-btn" data-toggle="dropdown" aria-expanded="false">
-        <span id="notification-count"><?php echo $notification_count; ?></span>
-        <img id="notif-img" src="pictures/bell-icon7.png" alt="Notifications">
-    </button>
-</div>
-<div class="pull-right clearfix">
-    <ul class="info-menu list-inline list-unstyled">
-        <li class="profile">
-            <a href="#" data-toggle="dropdown" class="toggle" aria-expanded="false">
-                <?php
-                // Different profile picture for each user level
-                $userImage = 'uploads/users/default.png'; // Default profile picture
-                if (isset($user['user_level'])) {
-                    if ($user['user_level'] == 1) {
-                        $userImage = !empty($user['image']) ? $user['image'] : 'uploads/admin/default_admin.png';
-                    } elseif ($user['user_level'] == 2) {
-                        $userImage = !empty($user['image']) ? $user['image'] : 'uploads/special/default_special.png';
-                    } else {
-                        $userImage = !empty($user['image']) ? $user['image'] : 'uploads/users/default_user.png';
-                    }
-                }
-                ?>
-                <img src="<?php echo $userImage; ?>" alt="user-image" class="img-circle img-inline">
-                <span>
-                    <?php echo isset($user) ? ucfirst(remove_junk($user['name'])) : ""; ?> <i class="caret"></i>
-                </span>
-            </a>
-            <ul class="dropdown-menu">
-                <li><a href="profile.php?id=<?php echo isset($user['id']) ? (int) $user['id'] : 0; ?>"><i class="glyphicon glyphicon-user"></i> Profile</a></li>
-                <li><a href="edit_account.php"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
-                <li class="last"><a href="logout.php"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
+            <button class="notification-btn" id="notification-btn" data-toggle="dropdown" aria-expanded="false">
+                <span id="notification-count"><?php echo $notification_count; ?></span>
+                <img id="notif-img" src="pictures/bell-icon7.png" alt="Notifications">
+            </button>
+            <!-- Notification Dropdown -->
+            <ul class="dropdown-menu" aria-labelledby="notification-btn" style="display: none;">
+                <?php if ($notification_count > 0): ?>
+                    <?php foreach ($unreadNotifications as $notification): ?>
+                        <li><?php echo $notification['message']; ?></li>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <li>No new notifications</li>
+                <?php endif; ?>
             </ul>
-        </li>
-    </ul>
-</div>
+        </div>
 
+        <!-- User Profile Dropdown -->
+        <div class="pull-right clearfix">
+            <ul class="info-menu list-inline list-unstyled">
+                <li class="profile">
+                    <a href="#" data-toggle="dropdown" class="toggle" aria-expanded="false">
+                        <img src="<?php echo htmlspecialchars($userImage); ?>" alt="user-image" class="img-circle img-inline">
+                        <span>
+                            <?php echo isset($user) ? ucfirst(remove_junk($user['name'])) : ""; ?> <i class="caret"></i>
+                        </span>
+                    </a>
+                    
+                    <!-- Profile Dropdown Menu -->
+                    <ul class="dropdown-menu">
+                        <li><a href="profile.php?id=<?php echo isset($user['id']) ? (int) $user['id'] : 0; ?>"><i class="glyphicon glyphicon-user"></i> Profile</a></li>
+                        <li><a href="edit_account.php"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
+                        <li class="last"><a href="logout.php"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
 </header>
 <?php endif; ?>
@@ -117,6 +118,15 @@ try {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Toggle the dropdown when notification button is clicked
+    $('#notification-btn').on('click', function() {
+        $(this).next('.dropdown-menu').toggle();
+    });
+});
+</script>
 
 </body>
 </html>
