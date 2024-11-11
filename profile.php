@@ -15,12 +15,12 @@
   page_require_level(3);
 
   // Get user ID from GET request
-  $user_id = $_GET['_id'] ?? null;
+  $user_id = $_SESSION['user_id'] ?? null;
   if (empty($user_id)) {
     redirect('home.php', false);
   } else {
      //Find the user by ObjectId
-    $user_p = $collection->findOne(['_id' => new ObjectId($user_id)]);
+    $user_p = $collection->findOne(['_id' => $user_id]);
   }
 
   function page_require_level($required_level) {

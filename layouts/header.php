@@ -105,7 +105,7 @@ try {
                     
                     <!-- Profile Dropdown Menu -->
                     <ul class="dropdown-menu">
-                        <li><a href="profile.php?id=<?php echo isset($user['id']) ? (int) $user['id'] : 0; ?>"><i class="glyphicon glyphicon-user"></i> Profile</a></li>
+                        <li><a href="profile.php?id=<?php echo isset($user['_id']) ?  $user['_id'] : 0; ?>"><i class="glyphicon glyphicon-user"></i> Profile</a></li>
                         <li><a href="edit_account.php"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
                         <li class="last"><a href="logout.php"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
                     </ul>
