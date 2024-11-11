@@ -99,4 +99,4 @@ $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retr
       </div>
     </div>
   </div>
-  <?php include_once('layouts/footer.php'); ?>  
+  <?php //include_once('layouts/footer.php'); ?>  

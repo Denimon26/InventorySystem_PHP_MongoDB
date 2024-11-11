@@ -182,4 +182,4 @@ if (isset($_POST['product'])) {
       </div>
   </div>
 
-<?php include_once('layouts/footer.php'); ?>
+<?php //include_once('layouts/footer.php'); ?>

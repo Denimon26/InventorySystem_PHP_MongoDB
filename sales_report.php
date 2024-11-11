@@ -180,4 +180,4 @@ $product_names = getProductNames($product_ids, $product_collection);
     </div>
 </div>
 
-<?php include_once('layouts/footer.php'); ?>
+<?php //include_once('layouts/footer.php'); ?>
