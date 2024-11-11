@@ -1,4 +1,5 @@
 <?php
+// Include MongoDB and user session functions
 require 'vendor/autoload.php';
 use MongoDB\Client;
 
@@ -6,6 +7,10 @@ use MongoDB\Client;
 $client = new Client("mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&ssl=true&appName=Cluster0");
 $notificationCollection = $client->inventory_system->notification;
 $productCollection = $client->inventory_system->product;
+
+// Check if user data is set in the session; otherwise, set default values
+$user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$userImage = isset($user['image']) ? htmlspecialchars($user['image']) : 'path/to/default/user-image.png'; // Set default image path
 
 // Fetch unread notifications
 try {
@@ -90,9 +95,9 @@ try {
             <ul class="info-menu list-inline list-unstyled">
                 <li class="profile">
                     <a href="#" data-toggle="dropdown" class="toggle" aria-expanded="false">
-                        <img src="<?php echo htmlspecialchars($userImage); ?>" alt="user-image" class="img-circle img-inline">
+                        <img src="<?php echo $userImage; ?>" alt="user-image" class="img-circle img-inline">
                         <span>
-                            <?php echo isset($user) ? ucfirst(remove_junk($user['name'])) : ""; ?> <i class="caret"></i>
+                            <?php echo isset($user['name']) ? ucfirst(remove_junk($user['name'])) : "Guest"; ?> <i class="caret"></i>
                         </span>
                     </a>
                     

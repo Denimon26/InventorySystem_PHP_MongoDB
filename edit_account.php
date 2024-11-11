@@ -29,8 +29,17 @@ page_require_level(3);
 // Update user photo in Base64 format and save to MongoDB
 if (isset($_POST['submit'])) {
     if (isset($_FILES['file_upload']) && $_FILES['file_upload']['error'] == 0) {
+        // Set max file size (in bytes) - e.g., 1MB
+        $maxFileSize = 1048576;
         $imageFileType = strtolower(pathinfo($_FILES["file_upload"]["name"], PATHINFO_EXTENSION));
         $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+
+        // Check if file size is within the allowed limit
+        if ($_FILES['file_upload']['size'] > $maxFileSize) {
+            $session->msg('d', 'File size exceeds the maximum limit of 1MB.');
+            redirect('edit_account.php');
+            exit();
+        }
 
         // Check if the file is an image and is of an allowed type
         $check = getimagesize($_FILES["file_upload"]["tmp_name"]);
@@ -39,17 +48,21 @@ if (isset($_POST['submit'])) {
             $imageData = file_get_contents($_FILES["file_upload"]["tmp_name"]);
             $base64Image = 'data:' . $check['mime'] . ';base64,' . base64_encode($imageData);
 
-            // Update the Base64 image string in MongoDB
-            $users->updateOne(
-                ['_id' => $user_id],
-                ['$set' => ['image' => $base64Image]]
-            );
-            $session->msg('s', 'Photo has been uploaded.');
+            try {
+                // Update the Base64 image string in MongoDB
+                $users->updateOne(
+                    ['_id' => $user_id],
+                    ['$set' => ['image' => $base64Image]]
+                );
+                $session->msg('s', 'Photo has been successfully uploaded.');
+            } catch (Exception $e) {
+                $session->msg('d', 'Error updating the image in the database: ' . $e->getMessage());
+            }
         } else {
             $session->msg('d', 'File is not a valid image or is not of an allowed type.');
         }
     } else {
-        $session->msg('d', 'No file selected or upload error.');
+        $session->msg('d', 'No file selected or there was an upload error.');
     }
     redirect('edit_account.php');
 }
@@ -98,19 +111,31 @@ if (isset($_POST['update'])) {
       </div>
       <div class="panel-body">
         <div class="row">
-          <div class="col-md-4">
-            <img class="img-circle img-size-2" src="<?php echo !empty($user['image']) ? $user['image'] : 'uploads/users/default.png'; ?>" alt="" style="width: 100px; height: 100px;">
-          </div>
-          <div class="col-md-8">
-            <form class="form" action="edit_account.php" method="POST" enctype="multipart/form-data">
-              <div class="form-group">
-                <input type="file" name="file_upload" class="btn btn-default btn-file"/>
-              </div>
-              <div class="form-group">
-                <button type="submit" name="submit" class="btn btn-primary">Change</button>
-              </div>
-            </form>
-          </div>
+        <div class="col-md-4">
+  <?php
+    // Assuming you retrieved the user document from MongoDB
+    $user = $users->findOne(['_id' => $user_id]);
+    $image = $user['image']; // Assuming 'image' field contains the Base64 string
+
+    // Display the image using the Base64 string or fallback to default image
+    if (!empty($image)) {
+        echo '<img src="' . htmlspecialchars($image) . '" alt="User Image" style="width: 100px; height: 100px; border-radius: 50%;">';
+    } else {
+        echo '<img src="uploads/users/default.png" alt="Default Image" style="width: 100px; height: 100px; border-radius: 50%;">';
+    }
+  ?>
+</div>
+
+<div class="col-md-8">
+  <form class="form" action="edit_account.php" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+      <input type="file" name="file_upload" class="btn btn-default btn-file"/>
+    </div>
+    <div class="form-group">
+      <button type="submit" name="submit" class="btn btn-primary">Change</button>
+    </div>
+  </form>
+</div>
         </div>
       </div>
     </div>
