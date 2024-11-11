@@ -20,6 +20,30 @@ if (isset($_POST['add_product'])) {
         }
     }
 
+    // Validate image upload
+    if (isset($_FILES['product-image']) && $_FILES['product-image']['error'] == 0) {
+        $maxFileSize = 1048576; // 1MB in bytes
+        $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+        $imageFileType = strtolower(pathinfo($_FILES["product-image"]["name"], PATHINFO_EXTENSION));
+
+        // Check file size
+        if ($_FILES['product-image']['size'] > $maxFileSize) {
+            $errors[] = 'Image file size exceeds the maximum limit of 1MB.';
+        }
+
+        // Check if image file is an allowed type
+        $check = getimagesize($_FILES["product-image"]["tmp_name"]);
+        if ($check !== false && in_array($imageFileType, $allowedTypes)) {
+            // Convert the image to Base64
+            $imageData = file_get_contents($_FILES["product-image"]["tmp_name"]);
+            $base64Image = 'data:' . $check['mime'] . ';base64,' . base64_encode($imageData);
+        } else {
+            $errors[] = 'Invalid image file type. Only JPG, JPEG, PNG, and GIF are allowed.';
+        }
+    } else {
+        $base64Image = null; // No image provided
+    }
+
     if (empty($errors)) {
         $p_name = $_POST['product-title'];
         $p_cat = $_POST['product-categorie'];
@@ -39,6 +63,7 @@ if (isset($_POST['add_product'])) {
             'buy_price' => $p_buy,
             'eoq' => $eoq,
             'categories' => $p_cat,
+            'image' => $base64Image,  // Store Base64 image
             'media_id' => '0',
             'date' => new MongoDB\BSON\UTCDateTime(),
         ];
@@ -74,7 +99,7 @@ if (isset($_POST['add_product'])) {
       </div>
       <div class="panel-body">
         <div class="col-md-12">
-          <form method="post" action="add_product.php" class="clearfix">
+          <form method="post" action="add_product.php" class="clearfix" enctype="multipart/form-data">
             <div class="form-group">
               <div class="input-group">
                 <span class="input-group-addon">
@@ -117,6 +142,13 @@ if (isset($_POST['add_product'])) {
                 </div>
               </div>
             </div>
+
+            <!-- Image input field -->
+            <div class="form-group">
+              <label for="product-image">Upload Product Image</label>
+              <input type="file" name="product-image" class="form-control">
+            </div>
+
             <button type="submit" name="add_product" class="btn btn-primary">Add Product</button>
           </form>
         </div>
