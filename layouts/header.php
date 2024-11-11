@@ -7,9 +7,11 @@ use MongoDB\Client;
 $client = new Client("mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&ssl=true&appName=Cluster0");
 $notificationCollection = $client->inventory_system->notification;
 $productCollection = $client->inventory_system->product;
+$database = $client->selectDatabase('inventory_system');
+$users = $database->selectCollection('users');
+$user = $users->findOne(['_id' => $_SESSION['user_id']]);
 
 // Check if user data is set in the session; otherwise, set default values
-$user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 $userImage = isset($user['image']) ? htmlspecialchars($user['image']) : 'path/to/default/user-image.png'; // Set default image path
 
 // Fetch unread notifications
