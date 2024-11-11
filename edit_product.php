@@ -141,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form-group">
                         <label for="qty">Price</label>
                         <div class="input-group">
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
+                            <span class="input-group-addon"><i> ₱ </i></span>
                             <input type="number" class="form-control" name="buying-price" value="<?php echo remove_junk($product['buy_price']); ?>">
                         </div>
                     </div>
