@@ -66,7 +66,6 @@ use MongoDB\BSON\ObjectId;
 <div class="row">
   <div class="col-half">
     <?php 
-      echo '<script>console.log(' . json_encode($msg) . ');</script>';
     ?>
   </div>
 </div>
