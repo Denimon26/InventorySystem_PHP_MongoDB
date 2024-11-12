@@ -3,7 +3,7 @@
         'name' => 'vendor/denzel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '44380df76a0a9d174fa2176039cbe542cba9b255',
+        'reference' => '5595266f546205900dbe9876f98bf2ee20259e08',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'mongodb/mongodb' => array(
-            'pretty_version' => '1.19.1',
-            'version' => '1.19.1.0',
-            'reference' => 'afe425b629075fa597fa2d5645045cb20dc93d95',
+            'pretty_version' => '1.20.0',
+            'version' => '1.20.0.0',
+            'reference' => '75da9ea3b63d97b05e0e8648d8c09a17bc54c0b6',
             'type' => 'library',
             'install_path' => __DIR__ . '/../mongodb/mongodb',
             'aliases' => array(),
@@ -49,7 +49,7 @@
         'vendor/denzel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '44380df76a0a9d174fa2176039cbe542cba9b255',
+            'reference' => '5595266f546205900dbe9876f98bf2ee20259e08',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
