@@ -1,6 +1,7 @@
 <?php
 // Include MongoDB and user session functions
 require 'vendor/autoload.php';
+
 use MongoDB\Client;
 
 // MongoDB Client and Collections
@@ -52,88 +53,143 @@ try {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title><?php echo !empty($page_title) ? remove_junk($page_title) : "Inventory Management System"; ?></title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="libs/css/main.css"/>
+    <link rel="stylesheet" href="libs/css/main.css" />
     <style>
-        #notif-img { width: 30px; height: 30px; cursor: pointer; }
-        #notification-count { top: 5px; right: 10px; color: white; border-radius: 20px; padding: 2px 8px; }
-        .notification-btn { background: none; border: none; cursor: pointer; }
-        .notification-btn:hover img { filter: brightness(0.3); }
+        #notif-img {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+
+        #notification-count {
+            top: 5px;
+            right: 10px;
+            color: white;
+            border-radius: 20px;
+            padding: 2px 8px;
+        }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .notification-btn:hover img {
+            filter: brightness(0.3);
+        }
+
+        @media (max-width: 600px) {
+            .header-content .header-date {
+                font-size: 5px;
+            }
+
+            .toggle span {
+                font-size: 12px;
+                /* Add this line to change the size */
+            }
+
+            .pull-right {
+                font-size: 14px;
+                /* Add this line to change the size */
+            }
+
+            #header .logo {
+                width: 40%;
+            }
+
+        }
+
+        @media (max-width: 555px) {
+            .header-content .header-date {
+                font-size: 0px;
+            }
+
+            #header .logo {
+                width: 30%;
+                font-size: 7px;
+            }
+        }
     </style>
 </head>
+
 <body>
-<?php if (isset($session) && $session->isUserLoggedIn(true)): ?>
-<header id="header">
-    <div class="logo pull-left">Inventory System</div>
-    <div class="header-content">
-        <div class="header-date pull-left">
-            <strong><?php echo date("F j, Y, g:i a"); ?></strong>
-        </div>
-        
-        <!-- Notification Section -->
-        <div class="header-notif pull-right">
-            <button class="notification-btn" id="notification-btn" data-toggle="dropdown" aria-expanded="false">
-                <span id="notification-count"><?php echo $notification_count; ?></span>
-                <img id="notif-img" src="pictures/bell-icon7.png" alt="Notifications">
-            </button>
-            <!-- Notification Dropdown -->
-            <ul class="dropdown-menu" aria-labelledby="notification-btn" style="display: none;">
-                <?php if ($notification_count > 0): ?>
-                    <?php foreach ($unreadNotifications as $notification): ?>
-                        <li><?php echo $notification['message']; ?></li>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <li>No new notifications</li>
-                <?php endif; ?>
-            </ul>
-        </div>
+    <?php if (isset($session) && $session->isUserLoggedIn(true)): ?>
+        <header id="header">
+            <div class="logo pull-left">Inventory System</div>
+            <div class="header-content">
+                <div class="header-date pull-left">
+                    <strong><?php echo date("F j, Y, g:i a"); ?></strong>
+                </div>
 
-        <!-- User Profile Dropdown -->
-        <div class="pull-right clearfix">
-            <ul class="info-menu list-inline list-unstyled">
-                <li class="profile">
-                    <a href="#" data-toggle="dropdown" class="toggle" aria-expanded="false">
-                        <img src="<?php echo $userImage; ?>" alt="user-image" class="img-circle img-inline">
-                        <span>
-                            <?php echo isset($user['name']) ? ucfirst(remove_junk($user['name'])) : "Guest"; ?> <i class="caret"></i>
-                        </span>
-                    </a>
-                    
-                    <!-- Profile Dropdown Menu -->
-                    <ul class="dropdown-menu">
-                        <li><a href="profile.php?id=<?php echo isset($user['_id']) ?  $user['_id'] : 0; ?>"><i class="glyphicon glyphicon-user"></i> Profile</a></li>
-                        <li><a href="edit_account.php"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
-                        <li class="last"><a href="logout.php"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
+                <!-- Notification Section -->
+                <div class="header-notif pull-right">
+                    <button class="notification-btn" id="notification-btn" data-toggle="dropdown" aria-expanded="false">
+                        <span id="notification-count"><?php echo $notification_count; ?></span>
+                        <img id="notif-img" src="pictures/bell-icon7.png" alt="Notifications">
+                    </button>
+                    <!-- Notification Dropdown -->
+                    <ul class="dropdown-menu" aria-labelledby="notification-btn" style="display: none;">
+                        <?php if ($notification_count > 0): ?>
+                            <?php foreach ($unreadNotifications as $notification): ?>
+                                <li><?php echo $notification['message']; ?></li>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <li>No new notifications</li>
+                        <?php endif; ?>
                     </ul>
-                </li>
-            </ul>
+                </div>
+
+                <!-- User Profile Dropdown -->
+                <div class="pull-right clearfix">
+                    <ul class="info-menu list-inline list-unstyled">
+                        <li class="profile">
+                            <a href="#" data-toggle="dropdown" class="toggle" aria-expanded="false">
+                                <img src="<?php echo $userImage; ?>" alt="user-image" class="img-circle img-inline">
+                                <span>
+                                    <?php echo isset($user['name']) ? ucfirst(remove_junk($user['name'])) : "Guest"; ?> <i class="caret"></i>
+                                </span>
+                            </a>
+
+                            <!-- Profile Dropdown Menu -->
+                            <ul class="dropdown-menu">
+                                <li><a href="profile.php?id=<?php echo isset($user['id']) ? (int) $user['id'] : 0; ?>"><i class="glyphicon glyphicon-user"></i> Profile</a></li>
+                                <li><a href="profile.php?id=<?php echo isset($user['_id']) ?  $user['_id'] : 0; ?>"><i class="glyphicon glyphicon-user"></i> Profile</a></li>
+                                <li><a href="edit_account.php"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
+                                <li class="last"><a href="logout.php"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+    <?php endif; ?>
+
+    <div class="page">
+        <div class="container-fluid">
+            <!-- Page content goes here -->
         </div>
     </div>
-</header>
-<?php endif; ?>
 
-<div class="page">
-    <div class="container-fluid">
-        <!-- Page content goes here -->
-    </div>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-
-<script>
-$(document).ready(function() {
-    // Toggle the dropdown when notification button is clicked
-    $('#notification-btn').on('click', function() {
-        $(this).next('.dropdown-menu').toggle();
-    });
-});
-</script>
+    <script>
+        $(document).ready(function() {
+            // Toggle the dropdown when notification button is clicked
+            $('#notification-btn').on('click', function() {
+                $(this).next('.dropdown-menu').toggle();
+            });
+        });
+    </script>
 
 </body>
+
 </html>
