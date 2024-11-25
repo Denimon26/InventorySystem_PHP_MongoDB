@@ -1,0 +1,63 @@
+/* Responsive Design */
+@media (max-width: 768px) {
+    .table {
+        font-size: 12px;
+    }
+    .btn, .btn-add-user {
+        font-size: 12px;
+        padding: 5px 8px;
+    }
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .navbar h1 {
+        font-size: 20px;
+    }
+    .nav-item a {
+        right: 0px;
+    }
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+    }
+    .table thead {
+        display: none;
+    }
+    .table tbody tr {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+    .table tbody td {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 5px 0;
+    }
+    .table tbody td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .table {
+        font-size: 13px;
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1440px) {
+    .table {
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 1441px) {
+    .table {
+        font-size: 16px;
+    }
+}
