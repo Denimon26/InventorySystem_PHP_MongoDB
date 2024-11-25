@@ -49,6 +49,30 @@
             margin-right: 10px;
         }
 
+        /* Dropdown container */
+        .dropdown-container {
+            display: none;
+            background-color: #222;
+            padding-left: 20px;
+        }
+
+        #sidePanel .dropdown-btn {
+            font-size: 18px;
+            padding: 15px 25px;
+            text-align: left;
+            background: none;
+            border: none;
+            outline: none;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        #sidePanel .dropdown-btn:hover {
+            background-color: #333;
+        }
+
         /* Toggle Button */
         .menu-btn {
             font-size: 26px;
@@ -82,7 +106,15 @@
         <a href="categorie.php"><i class="fas fa-tags icon"></i>Category</a>
         <a href="users.php"><i class="fas fa-user icon"></i>Users</a>
         <a href="group.php"><i class="fas fa-users icon"></i>Group</a>
-        <a href="sales_report.php"><i class="fas fa-chart-line icon"></i>Sales Report</a>
+
+        <!-- Dropdown Menu for Sales -->
+        <button class="dropdown-btn">
+            <i class="fas fa-chart-line icon"></i> Sales <i class="fas fa-caret-down" style="float: right;"></i>
+        </button>
+        <div class="dropdown-container">
+            <a href="sales.php"><i class="fas fa-plus-circle icon"></i>Create Sale</a>
+            <a href="sales_report.php"><i class="fas fa-file-alt icon"></i>Sale Report</a>
+        </div>
     </div>
 
     <!-- Main Content -->
@@ -102,6 +134,14 @@
                 mainContent.classList.add("content-shift");
             }
         }
+
+        // Dropdown Toggle
+        const dropdownBtn = document.querySelector(".dropdown-btn");
+        const dropdownContainer = document.querySelector(".dropdown-container");
+
+        dropdownBtn.addEventListener("click", function () {
+            dropdownContainer.style.display = dropdownContainer.style.display === "block" ? "none" : "block";
+        });
     </script>
 
 </body>

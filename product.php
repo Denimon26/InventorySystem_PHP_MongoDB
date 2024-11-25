@@ -91,9 +91,6 @@ $products = $products2->find();
                     <a href="delete_product.php?id=<?php echo $product['_id']; ?>" class="btn btn-xs btn-danger" title="Delete" data-toggle="tooltip">
                       <span class="glyphicon glyphicon-trash"></span>
                     </a>
-                    <a href="sales.php?id=<?php echo $product['_id']; ?>" class="btn btn-xs btn-success" title="Sell" data-toggle="tooltip">
-                      <span class="glyphicon glyphicon-shopping-cart"></span>
-                    </a>
                   </div>
                 </td>
               </tr>

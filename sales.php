@@ -1,72 +1,84 @@
 <?php
+$page_title = 'Sales';
 require_once('includes/load.php');
 require 'vendor/autoload.php';
 
 use MongoDB\Client;
 use MongoDB\BSON\ObjectId;
 
+// Connect to MongoDB
 $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 $client = new Client($uri);
 $database = $client->selectDatabase('inventory_system');
 $products2 = $database->selectCollection('product');
-$sales = $database->selectCollection('sales');
+$sales2 = $database->selectCollection('sales');
 
-// Check if product ID is passed in the URL
-if (isset($_GET['id'])) {
-    $productId = new ObjectId($_GET['id']);
-    $product = $products2->findOne(['_id' => $productId]);
+// Fetch all products
+$products = $products2->find();
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $quantity_sold = (int)$_POST['quantity_sold'];
-        $admin_id = $_SESSION['user_id'];
-        $total_price = $product['buy_price'] * $quantity_sold;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $order_items = $_POST['products'];
+    $total_cost = 0;
+    $sale_items = [];
 
-        if ($quantity_sold > 0 && $quantity_sold <= $product['quantity']) {
-            // Update product quantity
-            $new_quantity = $product['quantity'] - $quantity_sold;
-            $products2->updateOne(['_id' => $productId], ['$set' => ['quantity' => $new_quantity]]);
+    foreach ($order_items as $product_id => $quantity) {
+        if ($quantity > 0) {
+            $product = $products2->findOne(['_id' => new ObjectId($product_id)]);
+            $item_total = $product['buy_price'] * $quantity;
+            $total_cost += $item_total;
 
-            // Record the sale in the sales collection
-            $sales->insertOne([
-                'product_id' => $productId,
-                'quantity_sold' => $quantity_sold,
-                'sale_date' => new MongoDB\BSON\UTCDateTime(),
-                'sold_by' => new ObjectId($admin_id),
-                'total_price' => $total_price
-            ]);
+            $sale_items[] = [
+                'product_id' => $product_id,
+                'product_name' => $product['name'],
+                'quantity' => $quantity,
+                'price' => $product['buy_price'],
+                'total' => $item_total,
+            ];
 
-            // Redirect to sales_report.php
-            header("Location: sales_report.php");
-            exit;
-        } else {
-            echo "Invalid quantity.";
+            // Update product stock
+            $products2->updateOne(
+                ['_id' => new ObjectId($product_id)],
+                ['$inc' => ['quantity' => -$quantity]]
+            );
         }
     }
-} else {
-    echo "Product not found.";
-    exit;
+
+    // Save sale to the database
+    $sales2->insertOne([
+        'sale_items' => $sale_items,
+        'total_cost' => $total_cost,
+        'date' => new MongoDB\BSON\UTCDateTime(),
+    ]);
+
+    $msg = "Sale successfully recorded. Total Cost: ₱" . $total_cost;
 }
 ?>
-<link rel="stylesheet" href="libs/css/main.css" />
-<div class="row">
-    <div class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <strong>
-                    <span class="glyphicon glyphicon-th"></span>
-                    <span>Sell Product: <?php echo $product['name']; ?></span>
-                </strong>
-            </div>
-            <div class="panel-body">
-                <form method="POST" class="clearfix">
-                    <p>Current Stock: <?php echo $product['quantity']; ?></p>
-                    <div class="form-group">
-                        <label for="quantity_sold">Quantity to Sell:</label>
-                        <input type="number" name="quantity_sold" class="form-control" min="1" max="<?php echo $product['quantity']; ?>" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Record Sale</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+<?php include_once('layouts/header.php'); ?>
+<?php include_once('layouts/admin_menu.php'); ?>
+<h2>Sales</h2>
+<form method="POST" action="sales.php">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>In-Stock</th>
+                <th>Order Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($products as $product): ?>
+                <tr>
+                    <td><?php echo $product['name']; ?></td>
+                    <td>₱ <?php echo $product['buy_price']; ?></td>
+                    <td><?php echo $product['quantity']; ?></td>
+                    <td>
+                        <input type="number" name="products[<?php echo $product['_id']; ?>]" class="form-control" min="0" max="<?php echo $product['quantity']; ?>">
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Process Sale</button>
+</form>
+<?php include_once('layouts/footer.php'); ?>
