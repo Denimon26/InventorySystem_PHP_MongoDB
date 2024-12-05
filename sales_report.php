@@ -32,6 +32,7 @@ $sales = $salesCollection->find();
                 <tr>
                     <th>#</th>
                     <th>Sale Items</th>
+                    <th>Services</th>
                     <th>Total Amount</th>
                     <th>Sale Date</th>
                 </tr>
@@ -41,6 +42,8 @@ $sales = $salesCollection->find();
                 $count = 1;
                 foreach ($sales as $sale):
                     $saleItems = $sale['sale_items'] ?? [];
+                    $service = $sale['service'] ?? null;
+                    $serviceCost = $sale['cost'] ?? 0;
                 ?>
                 <tr>
                     <td><?php echo $count++; ?></td>
@@ -50,18 +53,28 @@ $sales = $salesCollection->find();
                                 <?php foreach ($saleItems as $item): ?>
                                     <li>
                                         <?php
-                                            echo "Product: " . htmlspecialchars($item['product_name'] ?? 'N/A') .
-                                                 ", Quantity: " . htmlspecialchars($item['quantity'] ?? 0) .
+                                            echo "Product: " . htmlspecialchars($item['product_name'] ?? 'N/A') . 
+                                                 ", Quantity: " . htmlspecialchars($item['quantity'] ?? 0) . 
                                                  ", Total: ₱" . htmlspecialchars($item['total'] ?? 0);
                                         ?>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
                         <?php else: ?>
-                            No items sold.
+                            No products sold.
                         <?php endif; ?>
                     </td>
-                    <td>₱ <?php echo htmlspecialchars($sale['total_cost'] ?? 0); ?></td>
+                    <td>
+                        <?php if ($service): ?>
+                            <?php
+                                echo "Service: " . htmlspecialchars($service) . 
+                                     ", Cost: ₱" . htmlspecialchars($serviceCost);
+                            ?>
+                        <?php else: ?>
+                            No services sold.
+                        <?php endif; ?>
+                    </td>
+                    <td>₱ <?php echo htmlspecialchars($sale['total_cost'] ?? $serviceCost); ?></td>
                     <td>
                         <?php
                         if (isset($sale['date'])) {
