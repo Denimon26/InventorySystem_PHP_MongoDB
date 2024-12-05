@@ -70,6 +70,7 @@
                                     <th class="text-center" style="width: 50px;">#</th>
                                     <th>Photo</th>
                                     <th>Product Name</th>
+                                    <th class="text-center" style="width: 10%;">Categories</th>
                                     <th class="text-center" style="width: 10%;">In-Stock</th>
                                 </tr>
                             </thead>
@@ -87,6 +88,7 @@
                                             </div>
                                         </td>
                                         <td><?php echo remove_junk($product['name']); ?></td>
+                                        <td class="text-center"><?php echo remove_junk($product['categories']); ?></td>
                                         <td class="text-center"><?php echo remove_junk($product['quantity']); ?></td>
                                     </tr>
                                 <?php endforeach; ?>
