@@ -61,6 +61,48 @@ try {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="libs/css/main.css" />
     <style>
+/* Dropdown Menu Styles */
+.info-menu .dropdown-menu {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 5px;
+    min-width: 180px;
+    padding: 0;
+}
+
+/* Dropdown Menu Items */
+.info-menu .dropdown-menu li {
+    list-style: none;
+}
+
+.info-menu .dropdown-menu li a {
+    display: block;
+    color: #333;
+    text-decoration: none;
+    padding: 10px 15px;
+    font-size: 14px;
+}
+
+.info-menu .dropdown-menu li a:hover {
+    background-color: #f5f5f5;
+    color: #000;
+}
+
+
+
+/* Highlight Last Item */
+.info-menu .dropdown-menu .last a {
+    color: #d9534f;
+}
+
+.info-menu .dropdown-menu .last a:hover {
+    background-color: #f5f5f5;
+    color: #b52b27;
+}
+
+
         #notif-img {
             width: 30px;
             height: 30px;
@@ -84,6 +126,47 @@ try {
         .notification-btn:hover img {
             filter: brightness(0.3);
         }
+        /* Dropdown Menu Styles */
+.header-notif .dropdown-menu {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+    width: 250px;
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Notification Item */
+.header-notif .dropdown-menu li {
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+/* Notification Item Hover */
+.header-notif .dropdown-menu li:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+}
+
+/* No Notifications Message */
+.header-notif .dropdown-menu li {
+    color: #777;
+    font-style: italic;
+    text-align: center;
+    padding: 15px 0;
+}
+
+/* Show Dropdown */
+.header-notif .dropdown-menu.show {
+    display: block;
+}
+
+
 
         @media (max-width: 600px) {
             .header-content .header-date {
@@ -147,27 +230,29 @@ try {
                 </div>
 
                 <!-- User Profile Dropdown -->
-                <div class="pull-right clearfix">
-                    <ul class="info-menu list-inline list-unstyled">
-                        <li class="profile">
-                            <a href="#" data-toggle="dropdown" class="toggle" aria-expanded="false">
-                                <img src="<?php echo $userImage; ?>" alt="user-image" class="img-circle img-inline">
-                                <span>
-                                    <?php echo isset($user['name']) ? ucfirst(remove_junk($user['name'])) : "Guest"; ?> <i class="caret"></i>
-                                </span>
-                            </a>
+<div class="pull-right clearfix">
+    <ul class="info-menu list-inline list-unstyled">
+        <li class="profile">
+            <a href="#" data-toggle="dropdown" class="toggle" aria-expanded="false">
+                <img src="<?php echo $userImage; ?>" alt="user-image" class="img-circle img-inline">
+                <span>
+                    <?php echo isset($user['name']) ? ucfirst(remove_junk($user['name'])) : "Guest"; ?> <i class="caret"></i>
+                </span>
+            </a>
 
-                            <!-- Profile Dropdown Menu -->
-<ul class="dropdown-menu">
-    <li><a href="profile.php?id=<?php echo isset($user['id']) ? (int) $user['id'] : 0; ?>"><i class="glyphicon glyphicon-user"></i> Profile</a></li>
-    <li><a href="edit_account.php"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
-    <li><a href="edit_website.php"><i class="glyphicon glyphicon-edit"></i> Edit Website</a></li> <!-- New Dropdown Item -->
-    <li class="last"><a href="logout.php"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
-</ul>
+            <!-- Profile Dropdown Menu -->
+            <ul class="dropdown-menu">
+                <li><a href="profile.php?id=<?php echo isset($user['id']) ? (int) $user['id'] : 0; ?>"><i class="glyphicon glyphicon-user"></i> Profile</a></li>
+                <li><a href="edit_account.php"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
+                <li><a href="websitetest.php"><i class="glyphicon glyphicon-edit"></i> Edit Website</a></li>
+                <li><a href="websitetest_add.php"><i class="glyphicon glyphicon-plus"></i> Add Website</a></li>
 
-                        </li>
-                    </ul>   
-                </div>
+                <li class="last"><a href="logout.php"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
             </div>
         </header>
     <?php endif; ?>
