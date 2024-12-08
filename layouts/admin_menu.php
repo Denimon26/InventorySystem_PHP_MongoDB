@@ -106,6 +106,7 @@
         <a href="categorie.php"><i class="fas fa-tags icon"></i>Category</a>
         <a href="users.php"><i class="fas fa-user icon"></i>Users</a>
         <a href="group.php"><i class="fas fa-users icon"></i>Group</a>
+        <a href="service.php"><i class="fas fa-users icon"></i>Service</a>
 
         <!-- Dropdown Menu for Sales -->
         <button class="dropdown-btn">

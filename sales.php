@@ -12,17 +12,13 @@ $client = new Client($uri);
 $database = $client->selectDatabase('inventory_system');
 $products2 = $database->selectCollection('product');
 $sales2 = $database->selectCollection('sales');
+$serviceCollection = $database->selectCollection('service');
 
 // Fetch all products
 $products = $products2->find();
 
-// Define available services
-$services = [
-    'Wheel Change',
-    'Oil Change',
-    'Engine Diagnostics',
-    'Brake Inspection'
-];
+// Fetch all services from the collection
+$services = $serviceCollection->find();
 
 $msg = '';
 
@@ -68,17 +64,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Handle Service Sales
     if (!empty($_POST['service']) && isset($_POST['price'])) {
-        $selected_service = $_POST['service'];
-        $service_cost = (float)$_POST['price'];
+        $selected_service_id = $_POST['service'];
+        $service_cost = (float) $_POST['price'];
 
-        if ($selected_service && $service_cost > 0) {
+        if ($selected_service_id && $service_cost > 0) {
+            $selected_service = $serviceCollection->findOne(['_id' => new ObjectId($selected_service_id)]);
+
             // Record service sale in the database
             $sales2->insertOne([
-                'service' => $selected_service,
+                'service_id' => (string) $selected_service['_id'],
+                'service_name' => $selected_service['name'],
                 'cost' => $service_cost,
                 'date' => new MongoDB\BSON\UTCDateTime(),
             ]);
-            $msg .= "Service sale successfully recorded. Service: $selected_service, Cost: ₱" . $service_cost . "<br>";
+            $msg .= "Service sale successfully recorded. Service: " . $selected_service['name'] . ", Cost: ₱" . $service_cost . "<br>";
         } else {
             $msg .= "Please select a valid service and price.<br>";
         }
@@ -125,8 +124,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="service">Select Service</label>
         <select name="service" id="service" class="form-control">
             <option value="">-- Select a Service --</option>
-            <?php foreach ($services as $service_name): ?>
-                <option value="<?php echo $service_name; ?>"><?php echo $service_name; ?></option>
+            <?php foreach ($services as $service): ?>
+                <option value="<?php echo (string) $service['_id']; ?>"><?php echo $service['name']; ?></option>
             <?php endforeach; ?>
         </select>
     </div>
