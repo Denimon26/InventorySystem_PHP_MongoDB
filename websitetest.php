@@ -13,36 +13,48 @@ $database = $client->selectDatabase('inventory_system');
 $websiteImagesCollection = $database->selectCollection('website_image');
 
 // Handle updates
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
-    $productId = $_POST['product_id'];
-    $newName = $_POST['product_name'];
-    $newImage = null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['update_product'])) {
+        $productId = $_POST['product_id'];
+        $newName = $_POST['product_name'];
+        $newImage = null;
 
-    // Handle image upload if provided
-    if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] == 0) {
-        $maxFileSize = 1048576; // 1MB
-        $imageFileType = strtolower(pathinfo($_FILES["product_image"]["name"], PATHINFO_EXTENSION));
-        $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+        // Handle image upload if provided
+        if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] == 0) {
+            $maxFileSize = 1048576; // 1MB
+            $imageFileType = strtolower(pathinfo($_FILES["product_image"]["name"], PATHINFO_EXTENSION));
+            $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
 
-        if ($_FILES['product_image']['size'] <= $maxFileSize && in_array($imageFileType, $allowedTypes)) {
-            $imageData = file_get_contents($_FILES["product_image"]["tmp_name"]);
-            $newImage = 'data:' . mime_content_type($_FILES["product_image"]["tmp_name"]) . ';base64,' . base64_encode($imageData);
+            if ($_FILES['product_image']['size'] <= $maxFileSize && in_array($imageFileType, $allowedTypes)) {
+                $imageData = file_get_contents($_FILES["product_image"]["tmp_name"]);
+                $newImage = 'data:' . mime_content_type($_FILES["product_image"]["tmp_name"]) . ';base64,' . base64_encode($imageData);
+            }
         }
+
+        // Update website_image in MongoDB
+        $updateFields = ['name' => $newName];
+        if ($newImage) {
+            $updateFields['image'] = $newImage;
+        }
+
+        $websiteImagesCollection->updateOne(
+            ['_id' => new MongoDB\BSON\ObjectId($productId)],
+            ['$set' => $updateFields]
+        );
+
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit;
     }
 
-    // Update website_image in MongoDB
-    $updateFields = ['name' => $newName];
-    if ($newImage) {
-        $updateFields['image'] = $newImage;
+    // Handle deletion
+    if (isset($_POST['delete_product'])) {
+        $productId = $_POST['product_id'];
+
+        $websiteImagesCollection->deleteOne(['_id' => new MongoDB\BSON\ObjectId($productId)]);
+
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit;
     }
-
-    $websiteImagesCollection->updateOne(
-        ['_id' => new MongoDB\BSON\ObjectId($productId)],
-        ['$set' => $updateFields]
-    );
-
-    header('Location: ' . $_SERVER['PHP_SELF']);
-    exit;
 }
 
 // Fetch website images
@@ -150,7 +162,7 @@ h1 {
 }
 
 /* Button Styles */
-.product-form button {
+.product-form .update-button {
     padding: 10px 20px;
     background-color: #4CAF50;
     color: white;
@@ -162,13 +174,29 @@ h1 {
     transition: background-color 0.3s ease;
 }
 
-.product-form button:hover {
+.product-form .update-button:hover {
     background-color: #45a049;
 }
 
 /* Error Styling for Inputs */
-.product-form input:invalid {
-    border-color: #e74c3c;
+.product-form input:invalid { 
+}
+
+/* Delete Button Styles */
+.delete-button {
+    padding: 10px 20px;
+    background-color: #e74c3c; /* Red color */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+    background-color: #c0392b; /* Darker red on hover */
 }
 
 /* Responsive Design */
@@ -199,10 +227,12 @@ h1 {
                     <input type="hidden" name="product_id" value="<?php echo $image['_id']; ?>">
                     <input type="text" name="product_name" value="<?php echo htmlspecialchars($image['name'] ?? ''); ?>" required>
                     <input type="file" name="product_image">
-                    <button type="submit" name="update_product">Update</button>
+                    <button type="submit" name="update_product" class="update-button">Update</button>
+                    <button type="submit" name="delete_product" class="delete-button" onclick="return confirm('Are you sure you want to delete this product?');">Delete</button>
+
                 </form>
             </div>
         <?php endforeach; ?>
     </div>
 </body>
-</html> 
+</html>

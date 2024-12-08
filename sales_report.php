@@ -33,6 +33,7 @@ $sales = $salesCollection->find();
                     <th>#</th>
                     <th>Sale Items</th>
                     <th>Services</th>
+                    <th>Note</th>
                     <th>Total Amount</th>
                     <th>Sale Date</th>
                 </tr>
@@ -42,8 +43,9 @@ $sales = $salesCollection->find();
                 $count = 1;
                 foreach ($sales as $sale):
                     $saleItems = $sale['sale_items'] ?? [];
-                    $service = $sale['service'] ?? null;
+                    $service = $sale['service_name'] ?? null;
                     $serviceCost = $sale['cost'] ?? 0;
+                    $note = $sale['note'] ?? 'No note available.';
                 ?>
                 <tr>
                     <td><?php echo $count++; ?></td>
@@ -73,6 +75,9 @@ $sales = $salesCollection->find();
                         <?php else: ?>
                             No services sold.
                         <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php echo htmlspecialchars($note); ?>
                     </td>
                     <td>₱ <?php echo htmlspecialchars($sale['total_cost'] ?? $serviceCost); ?></td>
                     <td>

@@ -66,15 +66,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($_POST['service']) && isset($_POST['price'])) {
         $selected_service_id = $_POST['service'];
         $service_cost = (float) $_POST['price'];
-
+        $note = !empty($_POST['note']) ? $_POST['note'] : null; // Get the note, if provided
+    
         if ($selected_service_id && $service_cost > 0) {
             $selected_service = $serviceCollection->findOne(['_id' => new ObjectId($selected_service_id)]);
-
+    
             // Record service sale in the database
             $sales2->insertOne([
                 'service_id' => (string) $selected_service['_id'],
                 'service_name' => $selected_service['name'],
                 'cost' => $service_cost,
+                'note' => $note, // Save the note
                 'date' => new MongoDB\BSON\UTCDateTime(),
             ]);
             $msg .= "Service sale successfully recorded. Service: " . $selected_service['name'] . ", Cost: ₱" . $service_cost . "<br>";
@@ -82,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $msg .= "Please select a valid service and price.<br>";
         }
     }
+    
 }
 ?>
 <?php include_once('layouts/header.php'); ?>
@@ -121,18 +124,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <h2>Service Sales</h2>
     <div class="form-group">
-        <label for="service">Select Service</label>
-        <select name="service" id="service" class="form-control">
-            <option value="">-- Select a Service --</option>
-            <?php foreach ($services as $service): ?>
-                <option value="<?php echo (string) $service['_id']; ?>"><?php echo $service['name']; ?></option>
-            <?php endforeach; ?>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="price">Enter Service Price (₱)</label>
-        <input type="number" name="price" id="price" class="form-control" min="0" step="0.01" placeholder="Enter price">
-    </div>
+    <label for="service">Select Service</label>
+    <select name="service" id="service" class="form-control">
+        <option value="">-- Select a Service --</option>
+        <?php foreach ($services as $service): ?>
+            <option value="<?php echo (string) $service['_id']; ?>"><?php echo $service['name']; ?></option>
+        <?php endforeach; ?>
+    </select>
+</div>
+<div class="form-group">
+    <label for="price">Enter Service Price (₱)</label>
+    <input type="number" name="price" id="price" class="form-control" min="0" step="0.01" placeholder="Enter price">
+</div>
+<div class="form-group">
+    <label for="note">Add a Note (Optional)</label>
+    <textarea name="note" id="note" class="form-control" rows="3" placeholder="Add any comment or note about the service..."></textarea>
+</div>
+
 
     <button type="submit" class="btn btn-primary">Process Sale</button>
 </form>
