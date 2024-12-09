@@ -64,9 +64,26 @@
 <?php include_once('layouts/admin_menu.php'); ?>
 <link rel="stylesheet" href="libs/css/main.css" />
 <div class="row">
-   <div class="col-md-12">
-     <?php echo display_msg($msg); ?>
-   </div>
+<div class="col-md-12">
+    <?php 
+    if (!empty($msg)) {
+        // Check if $msg is an array and convert it to a string if needed
+        $message = is_array($msg) ? implode(', ', $msg) : $msg;
+
+        // Determine if the message is a success or error
+        if (strpos($message, 'Successfully') !== false): ?>
+            <div class="alert alert-success" role="alert" style="background-color: green; font-weight: bold;">
+                <?php echo $message; ?>
+            </div>
+        <?php else: ?>
+            <div class="alert alert-danger" role="alert" style="background-color: red; font-weight: bold;">
+                <?php echo $message; ?>
+            </div>
+        <?php endif;
+    } ?>
+</div>
+
+
 </div>
 <div class="row">
   <div class="col-md-5">

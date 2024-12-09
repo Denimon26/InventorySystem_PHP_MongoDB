@@ -1,5 +1,6 @@
 <?php
 require 'vendor/autoload.php';
+require_once('includes/load.php');
 
 // Set up MongoDB Client
 $client = new MongoDB\Client('mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
@@ -84,17 +85,17 @@ if (isset($_POST['add_product'])) {
     }
 }
 ?>
-
+<?php include_once('layouts/header.php'); ?>
 <?php include_once('layouts/admin_menu.php'); ?>
 <link rel="stylesheet" href="libs/css/main.css" />
 <div class="row">
     <div class="col-md-12">
         <?php if (!empty($success_message)): ?>
-            <div class="alert alert-success" role="alert" style="color: green; font-weight: bold;">
+            <div class="alert alert-success" role="alert" style="background-color: green; font-weight: bold;">
                 <?php echo $success_message; ?>
             </div>
         <?php elseif (!empty($error_message)): ?>
-            <div class="alert alert-danger" role="alert" style="color: red; font-weight: bold;">
+            <div class="alert alert-danger" role="alert" style="background-color: red; font-weight: bold;">
                 <?php echo $error_message; ?>
             </div>
         <?php endif; ?>

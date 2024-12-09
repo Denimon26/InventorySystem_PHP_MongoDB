@@ -59,11 +59,18 @@ $services = $serviceCollection->find();
 
 <h2>Manage Services</h2>
 
-<?php if (!empty($msg)): ?>
-    <div class="alert alert-<?php echo strpos($msg, 'successfully') !== false ? 'success' : 'danger'; ?>">
-        <?php echo $msg; ?>
-    </div>
-<?php endif; ?>
+<div class="col-md-12">
+    <?php if (strpos($msg, 'successfully') !== false): ?>
+        <div class="alert alert-success" role="alert" style="background-color: green; font-weight: bold;">
+            <?php echo $msg; ?>
+        </div>
+    <?php elseif (!empty($msg)): ?>
+        <div class="alert alert-danger" role="alert" style="background-color: red; font-weight: bold;">
+            <?php echo $msg; ?>
+        </div>
+    <?php endif; ?>
+</div>
+
 
 <!-- Add New Service Form -->
 <form method="POST" action="service.php">
