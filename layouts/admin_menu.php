@@ -105,17 +105,19 @@
         <a href="product.php"><i class="fas fa-box icon"></i>Product</a>
         <a href="categorie.php"><i class="fas fa-tags icon"></i>Category</a>
         <a href="users.php"><i class="fas fa-user icon"></i>Users</a>
+        <a href="suppliers.php">
+        <img src="pictures/logistic.png" alt="Suppliers Icon" class="icon" style="width: 18px; height: 18px; margin-right: 10px;">
+    Suppliers
+</a>
+<a href="cashier.php">
+<img src="https://cdn-icons-png.flaticon.com/512/14428/14428795.png" alt="Suppliers Icon" class="icon" style="width: 18px; height: 18px; margin-right: 10px;">
+    Cashier
+</a>
         <a href="group.php"><i class="fas fa-users icon"></i>Group</a>
         <a href="service.php"><i class="fas fa-users icon"></i>Service</a>
+        <a href="sales_report.php"><i class="fas fa-chart-line icon"></i>Sales Report</a>
 
-        <!-- Dropdown Menu for Sales -->
-        <button class="dropdown-btn">
-            <i class="fas fa-chart-line icon"></i> Sales <i class="fas fa-caret-down" style="float: right;"></i>
-        </button>
-        <div class="dropdown-container">
-            <a href="sales.php"><i class="fas fa-plus-circle icon"></i>Create Sale</a>
-            <a href="sales_report.php"><i class="fas fa-file-alt icon"></i>Sale Report</a>
-        </div>
+        
     </div>
 
     <!-- Main Content -->

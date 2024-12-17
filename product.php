@@ -20,7 +20,7 @@ function page_require_level($required_level)
   if (!isset($admin)) {
     redirect('index.php', false);
   }
-  if ($admin['user_level'] <= (int)$required_level) {
+  if ($admin['user_level'] <= (int) $required_level) {
     return true;
   } else {
     redirect('home.php', false);
@@ -140,38 +140,46 @@ $products = $products2->find();
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($products as $product): ?>
-              <tr>
-                <td class="text-center"><?php echo count_id(); ?></td>
-                <td>
-                  <div class="text-center">
-                    <?php if (isset($product['image']) && !empty($product['image'])): ?>
-                      <img class="img-circle" src="<?php echo $product['image']; ?>" alt="Product Image" style="width: 100px; height: 100px;">
-                    <?php else: ?>
-                      <img class="img-circle" src="uploads/products/no_image.png" alt="Default Image" style="width: 100px; height: 100px;">
-                    <?php endif; ?>
+  <?php foreach ($products as $product): ?>
+    <?php 
+      $critical_amount = isset($product['critical_amount']) ? (int)$product['critical_amount'] : 0;
+      $quantity = isset($product['quantity']) ? (int)$product['quantity'] : 0;
 
-                  </div>
-                </td>
-                <td><?php echo remove_junk($product['name']); ?></td>
-                <td class="text-center"><?php echo remove_junk($product['categories']); ?></td>
-                <td class="text-center"><?php echo remove_junk($product['quantity']); ?></td>
-                <td class="text-center">₱ <?php echo remove_junk($product['buy_price']); ?></td>
-                <td class="text-center"><?php echo remove_junk($product['eoq']); ?></td>
-                <td class="text-center"><?php echo read_date($product['date']); ?></td>
-                <td class="text-center">
-                  <div class="btn-group">
-                    <a href="edit_product.php?id=<?php echo $product['_id']; ?>" class="btn btn-xs btn-warning" title="Edit" data-toggle="tooltip">
-                      <span class="glyphicon glyphicon-edit"></span>
-                    </a>
-                    <a href="delete_product.php?id=<?php echo $product['_id']; ?>" class="btn btn-xs btn-danger" title="Delete" data-toggle="tooltip">
-                      <span class="glyphicon glyphicon-trash"></span>
-                    </a>
-                  </div>
-                </td>
-              </tr>
-            <?php endforeach; ?>
-          </tbody>
+      $row_class = ($critical_amount > 0 && $quantity <= $critical_amount) ? 'critical-row' : '';
+    ?>
+    <tr class="<?php echo $row_class; ?>">
+      <td class="text-center"style="background-color: <?php echo ($critical_amount > 0 && $quantity <= $critical_amount) ? '#ffdddd' : ''; ?>"><?php echo count_id(); ?></td>
+      <td style="background-color: <?php echo ($critical_amount > 0 && $quantity <= $critical_amount) ? '#ffdddd' : ''; ?>">
+        <div class="text-center">
+          <?php if (isset($product['image']) && !empty($product['image'])): ?>
+            <img class="img-circle" src="<?php echo $product['image']; ?>" alt="Product Image" style="width: 100px; height: 100px;">
+          <?php else: ?>
+            <img class="img-circle" src="uploads/products/no_image.png" alt="Default Image" style="width: 100px; height: 100px;">
+          <?php endif; ?>
+        </div>
+      </td>
+      <td style="background-color: <?php echo ($critical_amount > 0 && $quantity <= $critical_amount) ? '#ffdddd' : ''; ?>"><?php echo remove_junk($product['name']); ?></td>
+
+      <td class="text-center" style="background-color: <?php echo ($critical_amount > 0 && $quantity <= $critical_amount) ? '#ffdddd' : ''; ?>"><?php echo remove_junk($product['categories']); ?></td>
+      <td class="text-center"style="background-color: <?php echo ($critical_amount > 0 && $quantity <= $critical_amount) ? '#ffdddd' : ''; ?>"><?php echo remove_junk($product['quantity']); ?></td>
+      <td class="text-center"style="background-color: <?php echo ($critical_amount > 0 && $quantity <= $critical_amount) ? '#ffdddd' : ''; ?>">₱ <?php echo remove_junk($product['buy_price']); ?></td>
+      <td class="text-center"style="background-color: <?php echo ($critical_amount > 0 && $quantity <= $critical_amount) ? '#ffdddd' : ''; ?>"><?php echo remove_junk($product['eoq']); ?></td>
+      <td class="text-center"style="background-color: <?php echo ($critical_amount > 0 && $quantity <= $critical_amount) ? '#ffdddd' : ''; ?>"><?php echo read_date($product['date']); ?></td>
+      <td class="text-center"style="background-color: <?php echo ($critical_amount > 0 && $quantity <= $critical_amount) ? '#ffdddd' : ''; ?>">
+        <div class="btn-group">
+          <a href="edit_product.php?id=<?php echo $product['_id']; ?>" class="btn btn-xs btn-warning" title="Edit" data-toggle="tooltip">
+            <span class="glyphicon glyphicon-edit"></span>
+          </a>
+          <a href="delete_product.php?id=<?php echo $product['_id']; ?>" class="btn btn-xs btn-danger" title="Delete" data-toggle="tooltip">
+            <span class="glyphicon glyphicon-trash"></span>
+          </a>
+        </div>
+      </td>
+    </tr>
+  <?php endforeach; ?>
+</tbody>
+
+
         </table>
       </div>
     </div>
