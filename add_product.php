@@ -148,7 +148,7 @@ if (isset($_POST['add_product'])) {
                                 <div class="col-md-4">
                                     <div class="input-group">
                                         <span class="input-group-addon">
-                                            <i class="glyphicon glyphicon-ruble"></i>
+                                            <i>₱</i>
                                         </span>
                                         <input type="number" class="form-control" name="buying-price" placeholder="Price">
                                         <span class="input-group-addon"></span>
