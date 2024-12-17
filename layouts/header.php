@@ -279,17 +279,18 @@ try {
                         <?php endif; ?>
                     </ul>
                 </div>
-
-                <!-- Cart Section -->
-<!-- Cart Section -->
+                <?php 
+                if ((int)$user['user_level'] != 1) {
+                    echo '
 <div class="header-cart pull-right">
-    <!-- Cart Button as Link -->
     <a href="cart.php" class="notification-btn" id="cart-btn">
         <span id="cart-count">0</span>
         <img id="cart-img" src="https://cdn-icons-png.flaticon.com/128/428/428173.png" alt="Cart">
     </a>
 </div>
-
+';
+}
+?>
                 <!-- User Profile Dropdown -->
 <div class="pull-right clearfix">
     <ul class="info-menu list-inline list-unstyled">
