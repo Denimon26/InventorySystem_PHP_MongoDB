@@ -6,6 +6,7 @@ $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retr
 $client = new Client($uri);
 $database = $client->selectDatabase('inventory_system');
 $orders = $database->selectCollection('orders');
+$products = $database->selectCollection('product'); 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $orderId = $_POST['order_id'];
@@ -24,6 +25,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         break;
       case 'paid':
         $orders->updateOne(['_id' => new MongoDB\BSON\ObjectId($orderId)], ['$set' => ['status' => 'completed']]);
+
+        $order = $orders->findOne(['_id' => new MongoDB\BSON\ObjectId($orderId)]);
+        $items = $order['items'];
+
+        foreach ($items as $item) {
+          $productName = $item['product_name'];
+          $quantityOrdered = $item['quantity'];
+
+          $products->updateOne(
+            ['name' => $productName],
+            ['$inc' => ['quantity' => -$quantityOrdered]]
+          );
+        }
         break;
     }
 

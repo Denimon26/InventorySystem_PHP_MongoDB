@@ -10,7 +10,15 @@ $notificationCollection = $client->inventory_system->notification;
 $productCollection = $client->inventory_system->product;
 $database = $client->selectDatabase('inventory_system');
 $users = $database->selectCollection('users');
-$user = $users->findOne(['_id' => $_SESSION['user_id']]);
+
+$admins = $database->selectCollection('admin');
+$users = $database->selectCollection('users');
+
+$user = $admins->findOne(['_id' => $_SESSION['user_id']]);
+if (!isset($user)) {
+  $user = $users->findOne(['_id' => $_SESSION['user_id']]);
+}
+
 
 // Check if user data is set in the session; otherwise, set default values
 $userImage = isset($user['image']) ? htmlspecialchars($user['image']) : 'path/to/default/user-image.png'; // Set default image path
@@ -299,9 +307,17 @@ try {
                 <li><a href="edit_account.php"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
                 <li><a href="websitetest.php"><i class="glyphicon glyphicon-edit"></i> Edit Website</a></li>
                 <li><a href="websitetest_add.php"><i class="glyphicon glyphicon-plus"></i> Add Website</a></li>
-                <li><a href="orders.php">        <img id="cart-img" src="https://cdn-icons-png.flaticon.com/512/2728/2728447.png
-" alt="Cart">
-                </i>My Orders</a></li>
+                <?php
+if ((int)$user['user_level'] != 1) {
+    echo '
+    <li>
+        <a href="orders.php">
+            <img id="cart-img" src="https://cdn-icons-png.flaticon.com/512/2728/2728447.png" alt="Cart">
+            My Orders
+        </a>
+    </li>';
+}
+?>
 
                 <li class="last"><a href="logout.php"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
             </ul>
@@ -324,6 +340,7 @@ try {
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
     <script>
+        console.log(<?php echo (int)$user['user_level'];?>);
         $(document).ready(function() {
             // Toggle the dropdown when notification button is clicked
             $('#notification-btn').on('click', function() {

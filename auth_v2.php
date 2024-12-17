@@ -27,7 +27,7 @@ if (empty($errors)) {
     elseif ($user['user_level'] == 2)
     {
       $session->msg("s", "Hello " . $user['username'] . ", Welcome to LionsTech INV.");
-      redirect('special.php', false);
+      redirect('home.php', false);
     }
     else
     {
