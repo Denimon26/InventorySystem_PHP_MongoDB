@@ -5,22 +5,27 @@
 
   use MongoDB\Client;
   use MongoDB\BSON\ObjectId;
-
   // Set up MongoDB Client
   $client = new MongoDB\Client('mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
   $db = $client->inventory_system;
   $collection = $db->users;
+  $collection2 = $db->admin;
 
-  // Checkin What level user has permission to view this page
-  page_require_level(3);
+  //page_require_level(-1);
 
   // Get user ID from GET request
   $user_id = $_SESSION['user_id'] ?? null;
-  if (empty($user_id)) {
+  if (empty($user_id)&&!isset($user_id)) {
     redirect('home.php', false);
   } else {
      //Find the user by ObjectId
     $user_p = $collection->findOne(['_id' => $user_id]);
+
+    if(!isset($user_p))
+    {
+      $user_p = $collection2->findOne(['_id' => $user_id ]);
+
+    }
   }
 
   function page_require_level($required_level) {

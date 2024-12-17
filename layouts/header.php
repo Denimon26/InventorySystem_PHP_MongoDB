@@ -260,23 +260,25 @@ try {
                     </ul>
                 </div>
 
-                <!-- User Profile Dropdown -->
                 <div class="pull-right clearfix">
                     <ul class="info-menu list-inline list-unstyled">
                         <li class="profile">
-                            <a href="#" data-toggle="dropdown" class="toggle" aria-expanded="false">
-                                <img src="<?php echo $userImage; ?>" alt="user-image" class="img-circle img-inline">
-                                <span>
-                                    <?php echo isset($user['name']) ? ucfirst(remove_junk($user['name'])) : "Guest"; ?> <i class="caret"></i>
-                                </span>
-                            </a>
+                        <a href="#" data-bs-toggle="dropdown" class="toggle" aria-expanded="false">
+    <img src="<?php echo $userImage; ?>" alt="user-image" class="img-circle img-inline">
+    <span>
+        <?php echo isset($user['name']) ? ucfirst(remove_junk($user['name'])) : "Guest"; ?> <i class="caret"></i>
+    </span>
+</a>
 
-                            <!-- Profile Dropdown Menu -->
-                            <ul class="dropdown-menu">
-                                <li><a href="profile.php?id=<?php echo isset($user['id']) ? (int) $user['id'] : 0; ?>"><i class="glyphicon glyphicon-user"></i> Profile</a></li>
-                                <li><a href="edit_account.php"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
-                                <li class="last"><a href="logout.php"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
-                            </ul>
+<ul class="dropdown-menu">
+    <li><a class="dropdown-item" href="profile.php?id=<?php echo isset($user['id']) ? (int) $user['id'] : 0; ?>"><i class="fa fa-user"></i> Profile</a></li>
+    <li><a class="dropdown-item" href="edit_account.php"><i class="fa fa-cog"></i> Settings</a></li>
+    <?php if ((int) $user['user_level'] != 1): ?>
+        <li><a class="dropdown-item" href="orders.php"><img id="cart-img" src="https://cdn-icons-png.flaticon.com/512/2728/2728447.png" alt="Cart"> My Orders</a></li>
+    <?php endif; ?>
+    <li class="last"><a class="dropdown-item" href="logout.php"><i class="fa fa-power-off"></i> Logout</a></li>
+</ul>
+
                         </li>
                     </ul>
                 </div>
