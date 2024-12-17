@@ -199,6 +199,49 @@ try {
                 font-size: 7px;
             }
         }
+
+
+
+        /* Cart Button Styles */
+#cart-img {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+#cart-count {
+    top: 5px;
+    right: 10px;
+    color: white;
+    border-radius: 20px;
+    padding: 2px 8px;
+}
+
+/* Dropdown Menu Styles for Cart */
+.header-cart .dropdown-menu {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgb(253, 253, 253);
+    margin-top: 10px;
+    width: 250px;
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.header-cart .dropdown-menu li {
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.header-cart .dropdown-menu li:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+}
+
     </style>
 </head>
 
@@ -229,6 +272,16 @@ try {
                     </ul>
                 </div>
 
+                <!-- Cart Section -->
+<!-- Cart Section -->
+<div class="header-cart pull-right">
+    <!-- Cart Button as Link -->
+    <a href="cart.php" class="notification-btn" id="cart-btn">
+        <span id="cart-count">0</span>
+        <img id="cart-img" src="https://cdn-icons-png.flaticon.com/128/428/428173.png" alt="Cart">
+    </a>
+</div>
+
                 <!-- User Profile Dropdown -->
 <div class="pull-right clearfix">
     <ul class="info-menu list-inline list-unstyled">
@@ -246,6 +299,9 @@ try {
                 <li><a href="edit_account.php"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
                 <li><a href="websitetest.php"><i class="glyphicon glyphicon-edit"></i> Edit Website</a></li>
                 <li><a href="websitetest_add.php"><i class="glyphicon glyphicon-plus"></i> Add Website</a></li>
+                <li><a href="orders.php">        <img id="cart-img" src="https://cdn-icons-png.flaticon.com/512/2728/2728447.png
+" alt="Cart">
+                </i>My Orders</a></li>
 
                 <li class="last"><a href="logout.php"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
             </ul>
@@ -274,6 +330,20 @@ try {
                 $(this).next('.dropdown-menu').toggle();
             });
         });
+
+  function updateCartCount() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let totalItems = 0;
+
+    cart.forEach(item => {
+      totalItems += item.quantity;
+    });
+
+    document.getElementById('cart-count').textContent = totalItems;
+  }
+
+  document.addEventListener('DOMContentLoaded', updateCartCount);
+
     </script>
 
 </body>

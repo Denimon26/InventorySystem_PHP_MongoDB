@@ -3,9 +3,7 @@
   require 'vendor/autoload.php';
   require_once('includes/load.php');
 
-  if (property_exists($session, 'message') && str_contains($session->message, 'admin')) {
-    echo '<script>console.log('.json_encode($session).')</script>';
-  }
+
 
   $page_title = 'Home Page';
 
@@ -57,29 +55,63 @@
         </form>
 
         <!-- Products Table -->
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th> Product Name </th>
-              <th> Category </th>
-              <th> Price </th>
-              <th> Quantity </th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php foreach ($all_products as $product): ?>
-              <?php if ($selected_category === '' || $product['categories'] === $selected_category): ?>
-                <tr>
-                  <td><?php echo remove_junk($product['name']); ?></td>
-                  <td><?php echo remove_junk($product['categories']); ?></td>
-                  <td>₱ <?php echo number_format($product['buy_price'], 2); ?> 
-                  <td><?php echo remove_junk($product['quantity']); ?></td>
-              <?php endif; ?>
-            <?php endforeach; ?>
-          </tbody>
-        </table>
+<!-- Products Table -->
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th> Product Name </th>
+      <th> Category </th>
+      <th> Price </th>
+      <th> Quantity Available </th>
+      <th> Quantity to Add </th>
+      <th> Action </th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($all_products as $product): ?>
+      <?php if ($selected_category === '' || $product['categories'] === $selected_category): ?>
+        <tr>
+          <td><?php echo remove_junk($product['name']); ?></td>
+          <td><?php echo remove_junk($product['categories']); ?></td>
+          <td>₱ <?php echo number_format($product['buy_price'], 2); ?></td>
+          <td><?php echo remove_junk($product['quantity']); ?></td>
+          <td>
+            <input type="number" id="qty-<?php echo $product['name']; ?>" class="form-control" min="1" max="<?php echo $product['quantity']; ?>" value="1" />
+          </td>
+          <td>
+            <button class="btn btn-success" onclick="addToCart('<?php echo $product['name']; ?>', '<?php echo $product['categories']; ?>', <?php echo $product['buy_price']; ?>, 'qty-<?php echo $product['name']; ?>')">
+              Add to Cart
+            </button>
+          </td>
+        </tr>
+      <?php endif; ?>
+    <?php endforeach; ?>
+  </tbody>
+</table>
+
+
       </div>
     </div>
   </div>
 </div>
+
+<script>
+function addToCart(name, category, price, qtyInputId) {
+  const quantity = parseInt(document.getElementById(qtyInputId).value) || 1;
+
+  const item = { name, category, price, quantity };
+
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+  cart.push(item);
+
+  localStorage.setItem('cart', JSON.stringify(cart));
+
+  updateCartCount();
+
+  alert(`${quantity} x ${name} has been added to your cart.`);
+}
+
+</script>
+
 <?php include_once('layouts/footer.php'); ?>

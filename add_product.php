@@ -51,8 +51,8 @@ if (isset($_POST['add_product'])) {
     if (empty($errors)) {
         $p_name = $_POST['product-title'];
         $p_cat = $_POST['product-categorie'];
-        $p_qty = (int)$_POST['product-quantity'];
-        $p_buy = (float)$_POST['buying-price'];
+        $p_qty = (int) $_POST['product-quantity'];
+        $p_buy = (float) $_POST['buying-price'];
 
         // EOQ Calculation (example values for costs)
         $demand_rate = 1000;
@@ -64,6 +64,7 @@ if (isset($_POST['add_product'])) {
         $product = [
             'name' => $p_name,
             'quantity' => $p_qty,
+            'critical_amount'=>$critical_amount,
             'buy_price' => $p_buy,
             'eoq' => $eoq,
             'categories' => $p_cat,
@@ -119,16 +120,19 @@ if (isset($_POST['add_product'])) {
                                 <span class="input-group-addon">
                                     <i class="glyphicon glyphicon-th-large"></i>
                                 </span>
-                                <input type="text" class="form-control" name="product-title" placeholder="Product Title">
+                                <input type="text" class="form-control" name="product-title"
+                                    placeholder="Product Title">
                             </div>
                         </div>
+
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-md-6">
                                     <select class="form-control" name="product-categorie">
                                         <option value="">Select Product Category</option>
                                         <?php foreach ($all_categories as $category): ?>
-                                            <option value="<?php echo $category['name']; ?>"><?php echo $category['name']; ?></option>
+                                            <option value="<?php echo $category['name']; ?>">
+                                                <?php echo $category['name']; ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -142,7 +146,8 @@ if (isset($_POST['add_product'])) {
                                         <span class="input-group-addon">
                                             <i class="glyphicon glyphicon-shopping-cart"></i>
                                         </span>
-                                        <input type="number" class="form-control" name="product-quantity" placeholder="Product Quantity">
+                                        <input type="number" class="form-control" name="product-quantity"
+                                            placeholder="Product Quantity">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
@@ -150,14 +155,27 @@ if (isset($_POST['add_product'])) {
                                         <span class="input-group-addon">
                                             <i class="glyphicon glyphicon-ruble"></i>
                                         </span>
-                                        <input type="number" class="form-control" name="buying-price" placeholder="Price">
-                                        <span class="input-group-addon"></span>
+                                        <input type="number" class="form-control" name="buying-price"
+                                            placeholder="Price">
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Image input field -->
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="glyphicon glyphicon-exclamation-sign"></i>
+                                        </span>
+                                        <input type="number" class="form-control" name="critical-amount"
+                                            placeholder="Critical Amount">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label for="product-image">Upload Product Image</label>
                             <input type="file" name="product-image" class="form-control">
@@ -165,6 +183,7 @@ if (isset($_POST['add_product'])) {
 
                         <button type="submit" name="add_product" class="btn btn-primary">Add Product</button>
                     </form>
+
                 </div>
             </div>
         </div>

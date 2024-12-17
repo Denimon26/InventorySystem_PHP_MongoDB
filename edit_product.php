@@ -62,14 +62,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Update product data
-        $data = [
-            'name' => $p_name,
-            'categories' => $p_cat,
-            'buy_price' => $p_buy,
-            'quantity' => $p_qty,
-            'date' => new MongoDB\BSON\UTCDateTime(),
-            'image' => $base64Image,  // Store new Base64 image or retain old image
-        ];
+        $p_critical = (int)remove_junk($_POST['critical-amount']);
+
+$data = [
+    'name' => $p_name,
+    'categories' => $p_cat,
+    'buy_price' => $p_buy,
+    'quantity' => $p_qty,
+    'critical_amount' => $p_critical,  // Add critical amount
+    'date' => new MongoDB\BSON\UTCDateTime(),
+    'image' => $base64Image,  // Store new Base64 image or retain old image
+];
+
 
         $result = $prod->updateOne(
             ['_id' => new MongoDB\BSON\ObjectId($prodid)],
@@ -106,47 +110,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <div class="panel-body">
             <div class="col-md-7">
-                <form method="post" action="edit_product.php?id=<?php echo $prodid; ?>" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-th-large"></i></span>
-                            <input type="text" class="form-control" name="product-title" value="<?php echo remove_junk($product['name']); ?>">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <select class="form-control" name="product-categorie">
-                                    <option value="">Select a category</option>
-                                    <?php foreach ($all_categories as $cat): ?>
-                                        <option value="<?php echo $cat['name']; ?>" <?php if($product['categories'] === $cat['name']): echo 'selected'; endif; ?>>
-                                            <?php echo remove_junk($cat['name']); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="product-image">Update Product Image</label>
-                        <input type="file" name="product-image" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="qty">Quantity</label>
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-shopping-cart"></i></span>
-                            <input type="number" class="form-control" name="product-quantity" value="<?php echo remove_junk($product['quantity']); ?>">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="qty">Price</label>
-                        <div class="input-group">
-                            <span class="input-group-addon"><i> ₱ </i></span>
-                            <input type="number" class="form-control" name="buying-price" value="<?php echo remove_junk($product['buy_price']); ?>">
-                        </div>
-                    </div>
-                    <button type="submit" name="product" class="btn btn-primary">Update</button>
-                </form>
+            <form method="post" action="edit_product.php?id=<?php echo $prodid; ?>" enctype="multipart/form-data">
+    <div class="form-group">
+        <div class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-th-large"></i></span>
+            <input type="text" class="form-control" name="product-title" value="<?php echo remove_junk($product['name']); ?>">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-6">
+                <select class="form-control" name="product-categorie">
+                    <option value="">Select a category</option>
+                    <?php foreach ($all_categories as $cat): ?>
+                        <option value="<?php echo $cat['name']; ?>" <?php if($product['categories'] === $cat['name']): echo 'selected'; endif; ?>>
+                            <?php echo remove_junk($cat['name']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="product-image">Update Product Image</label>
+        <input type="file" name="product-image" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label for="qty">Quantity</label>
+        <div class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-shopping-cart"></i></span>
+            <input type="number" class="form-control" name="product-quantity" value="<?php echo remove_junk($product['quantity']); ?>">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="price">Price</label>
+        <div class="input-group">
+            <span class="input-group-addon"><i> ₱ </i></span>
+            <input type="number" class="form-control" name="buying-price" value="<?php echo remove_junk($product['buy_price']); ?>">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="critical-amount">Critical Amount</label>
+        <div class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-exclamation-sign"></i></span>
+            <input type="number" class="form-control" name="critical-amount" value="<?php echo isset($product['critical_amount']) ? remove_junk($product['critical_amount']) : ''; ?>">
+        </div>
+    </div>
+
+    <button type="submit" name="product" class="btn btn-primary">Update</button>
+</form>
+
             </div>
         </div>
     </div>
