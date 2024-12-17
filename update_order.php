@@ -24,9 +24,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $orders->updateOne(['_id' => new MongoDB\BSON\ObjectId($orderId)], ['$set' => ['status' => 'pending']]);
         break;
       case 'paid':
-        $orders->updateOne(['_id' => new MongoDB\BSON\ObjectId($orderId)], ['$set' => ['status' => 'completed']]);
+        $currentDate = new UTCDateTime();
+        
+        $orders->updateOne([
+          '_id' => new MongoDB\BSON\ObjectId($orderId)
+        ], [
+          '$set' => [
+            'status' => 'completed',
+            'date_completed' => $currentDate
+          ]
+        ]);
 
-        $order = $orders->findOne(['_id' => new MongoDB\BSON\ObjectId($orderId)]);
+        $order = $orders->findOne([
+          '_id' => new MongoDB\BSON\ObjectId($orderId)
+        ]);
         $items = $order['items'];
 
         foreach ($items as $item) {

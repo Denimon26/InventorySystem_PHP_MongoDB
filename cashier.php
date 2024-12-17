@@ -61,7 +61,6 @@ $completedOrders = $usernameFilter ? $orders->find(['status' => 'completed', 'us
   }
 </script>
 
-<?php include_once('layouts/footer.php'); ?>
 
 <?php
 function displayOrders($orders, $status)
