@@ -13,7 +13,7 @@ $orders = $database->selectCollection('orders');
 $users = $database->selectCollection('users');
 
 $user = $users->findOne(['_id' => $_SESSION['user_id']]);
-$username = isset($user['name']) ? ucfirst(remove_junk($user['name'])) : "Guest";
+$username = isset($user['username']) ? ucfirst(remove_junk($user['username'])) : "Guest";
 
 $pendingOrders = $orders->find(['status' => 'pending', 'username' => $username]);
 $preparedOrders = $orders->find(['status' => 'prepared', 'username' => $username]);
