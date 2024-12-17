@@ -1,61 +1,34 @@
 <?php
-// Include MongoDB and user session functions
 require 'vendor/autoload.php';
 
 use MongoDB\Client;
 
-// MongoDB Client and Collections
 $client = new Client("mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&ssl=true&appName=Cluster0");
 $notificationCollection = $client->inventory_system->notification;
 $productCollection = $client->inventory_system->product;
 $database = $client->selectDatabase('inventory_system');
 $users = $database->selectCollection('users');
-
 $admins = $database->selectCollection('admin');
-$users = $database->selectCollection('users');
 
 $user = $admins->findOne(['_id' => $_SESSION['user_id']]);
-if (!isset($user)) {
+if (!$user) {
     $user = $users->findOne(['_id' => $_SESSION['user_id']]);
 }
 
+$userImage = isset($user['image']) ? htmlspecialchars($user['image']) : 'path/to/default/user-image.png';
 
-// Check if user data is set in the session; otherwise, set default values
-$userImage = isset($user['image']) ? htmlspecialchars($user['image']) : 'path/to/default/user-image.png'; // Set default image path
-
-// Fetch unread notifications
 try {
-    $unreadNotifications = $notificationCollection->find(['is_read' => 0], ['sort' => ['date' => -1]]);
-    $notification_count = $notificationCollection->countDocuments(['is_read' => 0]);
+    $products_query = [
+        '$expr' => [
+            '$lte' => ['$quantity', '$critical_amount']
+        ]
+    ];
+    $lowStockProducts = $productCollection->find($products_query)->toArray();
+    $notification_count = count($lowStockProducts);
 } catch (Exception $e) {
     $notification_count = 0;
-    $unreadNotifications = [];
-    error_log("Error fetching notifications: " . $e->getMessage());
-}
-
-// Check for products with low stock and create notifications if needed
-try {
-    $lowStockProducts = $productCollection->find(['quantity' => ['$lt' => 20]]);
-    foreach ($lowStockProducts as $product) {
-        $existingNotification = $notificationCollection->findOne([
-            'product_id' => $product['_id'],
-            'type' => 'critical_stock'
-        ]);
-
-        // Insert a notification if it doesn't already exist for this product
-        if (!$existingNotification) {
-            $notificationCollection->insertOne([
-                'product_id' => $product['_id'],
-                'message' => 'Low stock alert: ' . $product['name'] . ' has less than 20 items left.',
-                'date' => new MongoDB\BSON\UTCDateTime(),
-                'is_read' => 0,
-                'type' => 'critical_stock'
-            ]);
-            $notification_count++;
-        }
-    }
-} catch (Exception $e) {
-    error_log("Error checking critical stock products: " . $e->getMessage());
+    $lowStockProducts = [];
+    error_log("Error fetching low stock notifications: " . $e->getMessage());
 }
 ?>
 
@@ -68,6 +41,7 @@ try {
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="libs/css/main.css" />
+
     <style>
         /* Dropdown Menu Styles */
         .info-menu .dropdown-menu {
@@ -260,7 +234,6 @@ try {
                 Inventory System
                 <?php if ((int) $user['user_level'] != 1): ?>
                     <a href="home.php" class="btn btn-primary btn-sm" style="margin-left: 10px;">Home</a>
-
                 <?php endif; ?>
             </div>
 
@@ -268,7 +241,6 @@ try {
                 <div class="header-date pull-left">
                     <strong><?php echo date("F j, Y, g:i a"); ?></strong>
                 </div>
-
 
                 <!-- Notification Section -->
                 <div class="header-notif pull-right">
@@ -279,26 +251,15 @@ try {
                     <!-- Notification Dropdown -->
                     <ul class="dropdown-menu" aria-labelledby="notification-btn" style="display: none;">
                         <?php if ($notification_count > 0): ?>
-                            <?php foreach ($unreadNotifications as $notification): ?>
-                                <li><?php echo $notification['message']; ?></li>
+                            <?php foreach ($lowStockProducts as $product): ?>
+                                <li><?php echo 'Low stock alert: ' . htmlspecialchars($product['name']) . ' has less than ' . $product['critical_amount'] . ' items left.'; ?></li>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <li>No new notifications</li>
                         <?php endif; ?>
                     </ul>
                 </div>
-                <?php
-                if ((int) $user['user_level'] != 1) {
-                    echo '
-<div class="header-cart pull-right">
-    <a href="cart.php" class="notification-btn" id="cart-btn">
-        <span id="cart-count">0</span>
-        <img id="cart-img" src="https://cdn-icons-png.flaticon.com/128/428/428173.png" alt="Cart">
-    </a>
-</div>
-';
-                }
-                ?>
+
                 <!-- User Profile Dropdown -->
                 <div class="pull-right clearfix">
                     <ul class="info-menu list-inline list-unstyled">
@@ -306,75 +267,32 @@ try {
                             <a href="#" data-toggle="dropdown" class="toggle" aria-expanded="false">
                                 <img src="<?php echo $userImage; ?>" alt="user-image" class="img-circle img-inline">
                                 <span>
-                                    <?php echo isset($user['name']) ? ucfirst(remove_junk($user['name'])) : "Guest"; ?> <i
-                                        class="caret"></i>
+                                    <?php echo isset($user['name']) ? ucfirst(remove_junk($user['name'])) : "Guest"; ?> <i class="caret"></i>
                                 </span>
                             </a>
 
                             <!-- Profile Dropdown Menu -->
                             <ul class="dropdown-menu">
-                                <li><a href="profile.php?id=<?php echo isset($user['id']) ? (int) $user['id'] : 0; ?>"><i
-                                            class="glyphicon glyphicon-user"></i> Profile</a></li>
+                                <li><a href="profile.php?id=<?php echo isset($user['id']) ? (int) $user['id'] : 0; ?>"><i class="glyphicon glyphicon-user"></i> Profile</a></li>
                                 <li><a href="edit_account.php"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
-
-                                </li>
-                                <?php
-                                if ((int) $user['user_level'] != 1) {
-                                    echo '
-    <li>
-        <a href="orders.php">
-            <img id="cart-img" src="https://cdn-icons-png.flaticon.com/512/2728/2728447.png" alt="Cart">
-            My Orders
-        </a>
-    </li>';
-                                }
-                                ?>
-
-                                <li class="last"><a href="logout.php"><i class="glyphicon glyphicon-off"></i> Logout</a>
-                                </li>
+                                <li class="last"><a href="logout.php"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
                             </ul>
                         </li>
                     </ul>
                 </div>
-
             </div>
         </header>
     <?php endif; ?>
 
-    <div class="page">
-        <div class="container-fluid">
-            <!-- Page content goes here -->
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-
     <script>
-        console.log(<?php echo (int) $user['user_level']; ?>);
         $(document).ready(function () {
-            // Toggle the dropdown when notification button is clicked
             $('#notification-btn').on('click', function () {
                 $(this).next('.dropdown-menu').toggle();
             });
         });
-
-        function updateCartCount() {
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
-            let totalItems = 0;
-
-            cart.forEach(item => {
-                totalItems += item.quantity;
-            });
-
-            document.getElementById('cart-count').textContent = totalItems;
-        }
-
-        document.addEventListener('DOMContentLoaded', updateCartCount);
-
     </script>
-
 </body>
 
 </html>
