@@ -42,15 +42,13 @@ $completedOrders = $usernameFilter ? $orders->find(['status' => 'completed', 'us
 
   <div id="history-section" class="order-section" style="display: none;">
     <h3>Transaction History</h3>
-    <form method="POST" class="mb-3">
-      <input type="text" name="username" placeholder="Enter Username" class="form-control" required />
-      <button type="submit" class="btn btn-primary mt-2">Fetch Transactions</button>
-    </form>
+    <div class="mb-3">
+      <input type="text" id="usernameInput" placeholder="Enter Username" class="form-control" required />
+      <button id="fetchTransactionsBtn" class="btn btn-primary mt-2">Fetch Transactions</button>
+    </div>
 
-    <?php if ($usernameFilter): ?>
-      <h4>Transaction History for: <?php echo htmlspecialchars($usernameFilter); ?></h4>
-      <?php displayOrders($completedOrders, 'completed'); ?>
-    <?php endif; ?>
+    <h4 id="transactionHistoryTitle" style="display: none;"></h4>
+    <div id="completedOrdersContainer"></div>
   </div>
 </div>
 
@@ -65,10 +63,11 @@ $completedOrders = $usernameFilter ? $orders->find(['status' => 'completed', 'us
 <?php include_once('layouts/footer.php'); ?>
 
 <?php
-function displayOrders($orders, $status) {
+function displayOrders($orders, $status)
+{
   foreach ($orders as $order):
-    $orderId = (string)$order['_id']; 
-?>
+    $orderId = (string) $order['_id'];
+    ?>
     <div class="order-ticket mb-4 p-3 border">
       <h5><strong>Order ID:</strong> <?php echo $orderId; ?></h5>
       <p><strong>Username:</strong> <?php echo htmlspecialchars($order['username']); ?></p>
@@ -132,8 +131,76 @@ function displayOrders($orders, $status) {
         <?php endif; ?>
       </div>
     </div>
-<?php
+    <?php
   endforeach;
 }
 ?>
 
+
+
+<script>
+  document.getElementById('fetchTransactionsBtn').addEventListener('click', function () {
+    const username = document.getElementById('usernameInput').value;
+    const container = document.getElementById('completedOrdersContainer');
+    const title = document.getElementById('transactionHistoryTitle');
+
+    if (!username) {
+      alert("Please enter a username.");
+      return;
+    }
+
+    fetch('fetch_transactions.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `username=${encodeURIComponent(username)}`
+    })
+      .then(response => response.json())
+      .then(data => {
+        container.innerHTML = '';
+        title.style.display = 'block';
+        title.textContent = `Transaction History for: ${username}`;
+
+        if (data.length === 0) {
+          container.innerHTML = '<p>No transactions found for this user.</p>';
+          return;
+        }
+
+        data.forEach(order => {
+          const orderHTML = `
+            <div class="order-ticket mb-4 p-3 border">
+              <h5><strong>Order ID:</strong> ${order._id}</h5>
+              <p><strong>Username:</strong> ${order.username}</p>
+              <p><strong>Order Time:</strong> ${order.order_time}</p>
+              <p><strong>Total Order Price:</strong> ₱ ${parseFloat(order.total_order_price).toFixed(2)}</p>
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${order.items.map(item => `
+                    <tr>
+                      <td>${item.product_name}</td>
+                      <td>${item.category}</td>
+                      <td>₱ ${parseFloat(item.price).toFixed(2)}</td>
+                      <td>${item.quantity}</td>
+                      <td>₱ ${parseFloat(item.total_price).toFixed(2)}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>`;
+          container.innerHTML += orderHTML;
+        });
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        container.innerHTML = '<p>Failed to fetch transactions. Please try again.</p>';
+      });
+  });
+</script>
