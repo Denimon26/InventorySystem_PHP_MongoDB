@@ -30,6 +30,8 @@ if ($session->isUserLoggedIn(true)) {
             <button type="submit" class="btn btn-primary">Login</button>
           </div>
         </form>
+        <p>Don't have an account? <a href="register.php">Register here</a></p>
+
       </div>
     </div>
   </div>

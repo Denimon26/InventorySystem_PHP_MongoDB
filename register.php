@@ -1,0 +1,92 @@
+<?php
+ob_start();
+require_once('includes/load.php');
+if ($session->isUserLoggedIn(true)) {
+  redirect('home.php', false);
+}
+?>
+<link rel="stylesheet" href="libs/css/main.css" />
+<?php echo display_msg($msg); ?>
+
+<div class="register-page">
+  <div class="panel-form">
+    <div class="panel-heading-form">
+      <strong>
+        <span class="glyphicon glyphicon-user"></span>
+        <span>Register</span>
+      </strong>
+    </div>
+    <div class="panel-body">
+      <div class="col-md-6">
+        <form method="post" action="register_v2.php" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="name" class="control-label">Name</label>
+            <input type="text" class="form-control" name="name" placeholder="Full Name" required>
+          </div>
+          <div class="form-group">
+            <label for="username" class="control-label">Username</label>
+            <input type="text" class="form-control" name="username" placeholder="Username" required>
+          </div>
+          <div class="form-group">
+            <label for="password" class="control-label">Password</label>
+            <input type="password" class="form-control" name="password" placeholder="Password" required>
+          </div>
+          <div class="form-group">
+            <label for="confirm_password" class="control-label">Confirm Password</label>
+            <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password" required>
+          </div>
+          <div class="form-group">
+            <label for="image" class="control-label">Profile Image</label>
+            <input type="file" class="form-control" name="image" required>
+          </div>
+          <div class="form-group clearfix">
+            <button type="submit" class="btn btn-success">Register</button>
+          </div>
+        </form>
+        <p>Already have an account? <a href="index.php">Login here</a></p>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $name = $_POST['name'];
+  $username = $_POST['username'];
+  $password = $_POST['password'];
+  $confirm_password = $_POST['confirm_password'];
+  $image = $_FILES['image'];
+
+  if ($password !== $confirm_password) {
+    $session->msg('d', 'Passwords do not match.');
+    redirect('register.php', false);
+  }
+
+  $hashed_password = sha1($password);
+  $user_level = "2";
+  $status = 1;
+  $group_name = "";
+  $group_level = "";
+  $group_status = "";
+
+  $image_name = $image['name'];
+  $image_tmp = $image['tmp_name'];
+  $image_folder = 'uploads/users/' . basename($image_name);
+
+  if (move_uploaded_file($image_tmp, $image_folder)) {
+    $query = "INSERT INTO users (name, username, password, image, user_level, status, group_name, group_level, group_status) 
+              VALUES ('{$name}', '{$username}', '{$hashed_password}', '{$image_name}', '{$user_level}', '{$status}', '{$group_name}', '{$group_level}', '{$group_status}')";
+    if ($db->query($query)) {
+      $session->msg('s', 'Account created successfully.');
+      redirect('login.php', false);
+    } else {
+      $session->msg('d', 'Registration failed.');
+      redirect('register.php', false);
+    }
+  } else {
+    $session->msg('d', 'Failed to upload image.');
+    redirect('register.php', false);
+  }
+}
+?>
