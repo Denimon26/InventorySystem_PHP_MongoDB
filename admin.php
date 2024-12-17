@@ -1,191 +1,174 @@
 <?php
-$page_title = 'Admin Home Page';
-require_once('includes/load.php');
 require 'vendor/autoload.php';
+require_once('includes/load.php');
 
 use MongoDB\Client;
 
-// Check user permission level
-function page_require_level($required_level) {
-    $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
-    $client = new Client($uri);
-    $database = $client->selectDatabase('inventory_system');
-    $admins = $database->selectCollection('admin');
-
-    // Check if user is logged in and has required permission level
-    $admin = $admins->findOne(['_id' => new MongoDB\BSON\ObjectId($_SESSION['user_id'])]);
-    if (!isset($admin) || $admin['user_level'] > (int)$required_level) {
-        header('Location: index.php');
-        exit;
-    }
-}
-
-// Require admin level 3 or higher
-page_require_level(3);
-
-// MongoDB connection
+$page_title = 'Admin Home Page';
 $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 $client = new Client($uri);
 $database = $client->selectDatabase('inventory_system');
-
-// Collections
-$categories = $database->selectCollection('categories');
+$orders = $database->selectCollection('orders');
 $product = $database->selectCollection('product');
-$users = $database->selectCollection('users');
-$salesCollection = $database->selectCollection('sales');
 
-// Count totals
-$c_categorie = $categories->countDocuments();
 $c_product = $product->countDocuments();
-$c_user = $users->countDocuments();
+$lastTransactionsCursor = $orders->find(
+    ['status' => 'completed'],
+    ['sort' => ['date_completed' => -1], 'limit' => 5]
+);
+$lastTransactions = iterator_to_array($lastTransactionsCursor);
 
-// Fetch recent products
-$recent_products_cursor = $product->find([], ['sort' => ['date' => -1], 'limit' => 5]);
-$recent_products = iterator_to_array($recent_products_cursor);
+$today = new DateTime('today');
+$dates = [];
+$salesData = [];
 
-// Fetch low quantity products
-$low_limit = 99;
-$filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
+for ($i = 5; $i >= 0; $i--) {
+    $date = clone $today;
+    $date->modify("-$i days");
+    $dates[] = $date->format('Y-m-d');
 
-$products_query = [];
-if ($filter === 'critical') {
-    $products_query = ['quantity' => ['$lt' => 20]];
-} elseif ($filter === 'low') {
-    $products_query = ['quantity' => ['$gte' => 20, '$lt' => $low_limit]];
-} else {
-    $products_query = ['quantity' => ['$lt' => $low_limit]];
+    $startOfDay = new MongoDB\BSON\UTCDateTime($date->getTimestamp() * 1000);
+    $endOfDay = new MongoDB\BSON\UTCDateTime(($date->getTimestamp() + 86400) * 1000);
+
+    $salesForDay = $orders->aggregate([
+        ['$match' => [
+            'status' => 'completed',
+            'date_completed' => ['$gte' => $startOfDay, '$lt' => $endOfDay]
+        ]],
+        ['$group' => ['_id' => null, 'total' => ['$sum' => '$total_order_price']]]
+    ])->toArray();
+
+    $salesData[] = $salesForDay ? $salesForDay[0]['total'] : 0;
 }
-$products_by_quantity = $product->find($products_query, ['sort' => ['quantity' => 1]])->toArray();
 
-// Fetch fast and slow-moving products
-$fast_moving_sales_threshold = 50;
-$slow_moving_sales_threshold = 10;
-
-$fast_moving_query = ['sales' => ['$gte' => $fast_moving_sales_threshold]];
-$slow_moving_query = ['sales' => ['$lt' => $slow_moving_sales_threshold]];
-
-$fast_moving_products = iterator_to_array($product->find($fast_moving_query, ['sort' => ['sales' => -1]]));
-$slow_moving_products = iterator_to_array($product->find($slow_moving_query, ['sort' => ['sales' => 1]]));
 ?>
 
 <?php include_once('layouts/header.php'); ?>
 <?php include_once('layouts/admin_menu.php'); ?>
 <link rel="stylesheet" href="libs/css/main.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="row">
-    <!-- Dashboard panels -->
-    <a href="product.php" class="product-link">
-        <div class="col-quarter">
-            <div class="panel-product panel-box clearfix">
-                <div class="panel-icon bg-blue2">
-                    <i class="glyphicon glyphicon-shopping-cart"></i>
-                </div>
-                <div class="panel-value">
-                    <h2 class="panel-count"><?php echo $c_product; ?></h2>
-                    <p class="panel-text">Products</p>
-                </div>
-            </div>
+
+<a href="product.php" class="product-link">
+    <div class="col-quarter">
+       <div class="panel-product panel-box clearfix">
+         <div class="panel-icon bg-blue2">
+          <i class="glyphicon glyphicon-shopping-cart"></i>
         </div>
-    </a>
+        <div class="panel-value">
+          <h2 class="panel-count"> <?php  echo $c_product; ?> </h2>
+          <p class="panel-text">Products</p>
+        </div>
+       </div>
+    </div>
+</a>
+
+<div class="col-third">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <strong>
+                <span class="glyphicon glyphicon-th-list"></span>
+                <span>Critical Level Products</span>
+            </strong>
+        </div>
+        <div class="panel-body">
+            <ul class="list-group">
+                <?php
+                $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+                $client = new Client($uri);
+                $database = $client->selectDatabase('inventory_system');
+                $products2 = $database->selectCollection('product');
+
+                $products_query = [
+                    '$expr' => [
+                        '$lte' => ['$quantity', '$critical_amount']
+                    ]
+                ];
+
+                $products_by_quantity = $products2->find($products_query, ['sort' => ['quantity' => 1]])->toArray();
+
+                if (empty($products_by_quantity)) {
+                    echo "<li class='list-group-item'>No critical level products found</li>";
+                } else {
+                    foreach ($products_by_quantity as $prod) {
+                        $quantity = $prod['quantity'];
+                        ?>
+                        <li class="list-group-item">
+                            <span class="badge"><?php echo $quantity; ?></span>
+                            <?php echo htmlspecialchars($prod['name']); ?>
+                            <span class="label label-danger pull-right">Critical</span>
+                        </li>
+                        <?php
+                    }
+                }
+                ?>
+            </ul>
+        </div>
+    </div>
 </div>
-
-<div class="row">
-    <!-- Low Quantity Products -->
-    <div class="col-third">
+    <!-- Last 5 Transactions -->
+    <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <strong>
-                    <span class="glyphicon glyphicon-th-list"></span>
-                    <span>Low Quantity Products</span>
+                    <span class="glyphicon glyphicon-list-alt"></span>
+                    <span>Last 5 Transactions</span>
                 </strong>
             </div>
             <div class="panel-body">
-                <form method="get" action="">
-                    <label for="filter">Filter by:</label>
-                    <select name="filter" id="filter" class="form-control" onchange="this.form.submit()">
-                        <option value="all" <?php if ($filter == 'all') echo 'selected'; ?>>All</option>
-                        <option value="critical" <?php if ($filter == 'critical') echo 'selected'; ?>>Critical</option>
-                        <option value="low" <?php if ($filter == 'low') echo 'selected'; ?>>Low</option>
-                    </select>
-                </form>
                 <ul class="list-group">
-                    <?php if (empty($products_by_quantity)) : ?>
-                        <li class="list-group-item">No products found</li>
-                    <?php else : ?>
-                        <?php foreach ($products_by_quantity as $prod) : ?>
-                            <li class="list-group-item">
-                                <span class="badge"><?php echo $prod['quantity']; ?></span>
-                                <?php echo htmlspecialchars($prod['name']); ?>
-                                <?php if ($prod['quantity'] < 20) : ?>
-                                    <span class="label label-danger pull-right">Critical</span>
-                                <?php elseif ($prod['quantity'] >= 20 && $prod['quantity'] < $low_limit) : ?>
-                                    <span class="label label-warning pull-right">Low</span>
-                                <?php endif; ?>
-                            </li>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                    <?php foreach ($lastTransactions as $transaction): ?>
+                        <li class="list-group-item">
+                            <strong><?php echo htmlspecialchars($transaction['username']); ?></strong> 
+                            - <?php echo $transaction['date_completed']->toDateTime()->format('Y-m-d H:i:s'); ?>
+                            <span class="badge">₱ <?php echo number_format($transaction['total_order_price'], 2); ?></span>
+                        </li>
+                    <?php endforeach; ?>
                 </ul>
             </div>
         </div>
     </div>
 
-    <!-- Fast-Moving Products -->
-    <div class="col-third">
+    <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <strong>
-                    <span class="glyphicon glyphicon-th-list"></span>
-                    <span>Fast-Moving Products</span>
+                    <span class="glyphicon glyphicon-signal"></span>
+                    <span>Sales Today vs Last 5 Days</span>
                 </strong>
             </div>
             <div class="panel-body">
-                <ul class="list-group">
-                    <?php if (empty($fast_moving_products)) : ?>
-                        <li class="list-group-item">No fast-moving products found</li>
-                    <?php else : ?>
-                        <?php foreach ($fast_moving_products as $product) : ?>
-                            <li class="list-group-item">
-                                <span class="badge">Sales: <?php echo $product['sales']; ?></span>
-                                <strong><?php echo htmlspecialchars($product['name']); ?></strong> 
-                                <br>
-                                Stock: <?php echo $product['quantity']; ?>
-                                <span class="label label-success pull-right">Fast-Moving</span>
-                            </li>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- Slow-Moving Products -->
-    <div class="col-third">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <strong>
-                    <span class="glyphicon glyphicon-th-list"></span>
-                    <span>Slow-Moving Products</span>
-                </strong>
-            </div>
-            <div class="panel-body">
-                <ul class="list-group">
-                    <?php if (empty($slow_moving_products)) : ?>
-                        <li class="list-group-item">No slow-moving products found</li>
-                    <?php else : ?>
-                        <?php foreach ($slow_moving_products as $product) : ?>
-                            <li class="list-group-item">
-                                <span class="badge">Sales: <?php echo $product['sales']; ?></span>
-                                <strong><?php echo htmlspecialchars($product['name']); ?></strong> 
-                                <br>
-                                Stock: <?php echo $product['quantity']; ?>
-                                <span class="label label-danger pull-right">Slow-Moving</span>
-                            </li>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </ul>
+                <canvas id="salesChart" width="400" height="200"></canvas>
             </div>
         </div>
     </div>
 </div>
 
-<?php // include_once('layouts/footer.php'); ?>
+<script>
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    const salesData = {
+        labels: <?php echo json_encode($dates); ?>,
+        datasets: [{
+            label: 'Total Sales (₱)',
+            data: <?php echo json_encode($salesData); ?>,
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    };
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: salesData,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+<?php //include_once('layouts/footer.php'); ?>

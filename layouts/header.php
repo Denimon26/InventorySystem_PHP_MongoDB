@@ -260,8 +260,6 @@ try {
                 Inventory System
                 <?php if ((int) $user['user_level'] != 1): ?>
                     <a href="home.php" class="btn btn-primary btn-sm" style="margin-left: 10px;">Home</a>
-                    <?php else : ?>
-                        <a href="admin.php" class="btn btn-primary btn-sm" style="margin-left: 10px;">Home</a>
 
                 <?php endif; ?>
             </div>
