@@ -16,6 +16,8 @@ $preparedOrders = $orders->find(['status' => 'prepared']);
 
 $usernameFilter = isset($_POST['username']) ? $_POST['username'] : null;
 $completedOrders = $usernameFilter ? $orders->find(['status' => 'completed', 'username' => $usernameFilter]) : [];
+
+define('PRE_ORDER_TIME_LIMIT', 60);
 ?>
 
 <?php include_once('layouts/header.php'); ?>
@@ -33,12 +35,16 @@ $completedOrders = $usernameFilter ? $orders->find(['status' => 'completed', 'us
 
   <div id="pending-section" class="order-section">
     <h3>Pending Orders</h3>
-    <?php displayOrders($pendingOrders, 'pending'); ?>
+    <div id="pending-orders-container">
+      <?php displayOrders($pendingOrders, 'pending'); ?>
+    </div>
   </div>
 
   <div id="prepared-section" class="order-section" style="display: none;">
     <h3>Prepared Orders</h3>
-    <?php displayOrders($preparedOrders, 'prepared'); ?>
+    <div id="prepared-orders-container">
+      <?php displayOrders($preparedOrders, 'prepared'); ?>
+    </div>
   </div>
 
   <div id="history-section" class="order-section" style="display: none;">
@@ -54,94 +60,55 @@ $completedOrders = $usernameFilter ? $orders->find(['status' => 'completed', 'us
 </div>
 
 <script>
+  // Show and hide different sections
   function showSection(sectionId) {
     const sections = document.querySelectorAll('.order-section');
     sections.forEach(section => section.style.display = 'none');
     document.getElementById(sectionId).style.display = 'block';
   }
-</script>
 
+  // Auto-fetch orders every 10 seconds for pending and prepared orders
+  setInterval(function() {
+    fetchOrders('pending');
+    fetchOrders('prepared');
+  }, 10000); // 10 seconds
 
-<?php
-function displayOrders($orders, $status)
-{
-  foreach ($orders as $order):
-    $orderId = (string) $order['_id'];
-    ?>
-    <div class="order-ticket mb-4 p-3 border">
-      <h5><strong>Order ID:</strong> <?php echo $orderId; ?></h5>
-      <p><strong>Username:</strong> <?php echo htmlspecialchars($order['username']); ?></p>
-      <p><strong>Number:</strong> <?php echo htmlspecialchars($order['number'] ?? 'N/A'); ?></p>
-<p><strong>Email:</strong> <?php echo htmlspecialchars($order['email'] ?? 'N/A'); ?></p>
+  // Function to fetch orders and update the DOM
+  function fetchOrders(status) {
+    fetch(`fetch_orders.php?status=${status}`)
+      .then(response => response.json())
+      .then(data => {
+        if (status === 'pending') {
+          updateOrdersContainer('pending-orders-container', data);
+        } else if (status === 'prepared') {
+          updateOrdersContainer('prepared-orders-container', data);
+        }
+      })
+      .catch(error => console.error('Error fetching orders:', error));
+  }
 
-      <p><strong>Order Time:</strong> <?php echo $order['order_time']->toDateTime()->format('Y-m-d H:i:s'); ?></p>
-      <p><strong>Total Order Price:</strong> ₱ <?php echo number_format($order['total_order_price'], 2); ?></p>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Product Name</th>
-            <th>Category</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Total Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($order['items'] as $item): ?>
-            <tr>
-              <td><?php echo htmlspecialchars($item['product_name']); ?></td>
-              <td><?php echo htmlspecialchars($item['category']); ?></td>
-              <td>₱ <?php echo number_format($item['price'], 2); ?></td>
-              <td><?php echo $item['quantity']; ?></td>
-              <td>₱ <?php echo number_format($item['total_price'], 2); ?></td>
-            </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
+  // Function to update the order container with new data
+  function updateOrdersContainer(containerId, orders) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = ''; // Clear existing content
 
-      <div class="mt-3">
-        <?php if ($status === 'pending'): ?>
-          <form method="POST" action="update_order.php">
-            <input type="hidden" name="order_id" value="<?php echo $orderId; ?>">
-            <input type="hidden" name="action" value="ready">
-            <button type="submit" class="btn btn-success">Ready</button>
-          </form>
+    orders.forEach(order => {
+      const orderHTML = `
+        <div class="order-ticket mb-4 p-3 border">
+          <h5><strong>Order ID:</strong> ${order._id}</h5>
+          <p><strong>Username:</strong> ${order.username}</p>
+          <p><strong>Number:</strong> ${order.number || 'N/A'}</p>
+          <p><strong>Email:</strong> ${order.email || 'N/A'}</p>
+          <p><strong>Order Time:</strong> ${order.order_time}</p>
+          <p><strong>Total Order Price:</strong> ₱ ${parseFloat(order.total_order_price).toFixed(2)}</p>
+          <p><strong>Status:</strong> ${order.status}</p>
+        </div>
+      `;
+      container.innerHTML += orderHTML;
+    });
+  }
 
-          <form method="POST" action="update_order.php">
-            <input type="hidden" name="order_id" value="<?php echo $orderId; ?>">
-            <input type="hidden" name="action" value="cancel">
-            <button type="submit" class="btn btn-danger">Cancel</button>
-          </form>
-
-        <?php elseif ($status === 'prepared'): ?>
-          <form method="POST" action="update_order.php">
-            <input type="hidden" name="order_id" value="<?php echo $orderId; ?>">
-            <input type="hidden" name="action" value="unprepare">
-            <button type="submit" class="btn btn-secondary">Unprepare</button>
-          </form>
-
-          <form method="POST" action="update_order.php">
-            <input type="hidden" name="order_id" value="<?php echo $orderId; ?>">
-            <input type="hidden" name="action" value="cancel">
-            <button type="submit" class="btn btn-danger">Cancel</button>
-          </form>
-
-          <form method="POST" action="update_order.php">
-            <input type="hidden" name="order_id" value="<?php echo $orderId; ?>">
-            <input type="hidden" name="action" value="paid">
-            <button type="submit" class="btn btn-success">Paid</button>
-          </form>
-        <?php endif; ?>
-      </div>
-    </div>
-    <?php
-  endforeach;
-}
-?>
-
-
-
-<script>
+  // Fetch transaction history for a specific username
   document.getElementById('fetchTransactionsBtn').addEventListener('click', function () {
     const username = document.getElementById('usernameInput').value;
     const container = document.getElementById('completedOrdersContainer');
@@ -207,3 +174,94 @@ function displayOrders($orders, $status)
       });
   });
 </script>
+
+<?php
+// Function to display orders
+function displayOrders($ordersCursor, $status)
+{
+    global $orders; // Access the orders collection globally
+
+    foreach ($ordersCursor as $order):
+        $orderId = (string) $order['_id']; // Convert ObjectId to string
+        $orderTime = $order['order_time']->toDateTime(); // Convert MongoDB DateTime to PHP DateTime
+        $currentTime = new DateTime(); // Current time
+        $timeDifference = $currentTime->getTimestamp() - $orderTime->getTimestamp(); // Calculate time difference
+        $isExpired = $timeDifference > PRE_ORDER_TIME_LIMIT; // Check if order is expired
+
+        // Handle expired orders
+        if ($isExpired) {
+            $orders->deleteOne(['_id' => $order['_id']]); // Delete expired order
+            continue; // Skip displaying expired orders
+        }
+        ?>
+        <div class="order-ticket mb-4 p-3 border">
+            <h5><strong>Order ID:</strong> <?php echo $orderId; ?></h5>
+            <p><strong>Username:</strong> <?php echo htmlspecialchars($order['username']); ?></p>
+            <p><strong>Number:</strong> <?php echo htmlspecialchars($order['number'] ?? 'N/A'); ?></p>
+            <p><strong>Email:</strong> <?php echo htmlspecialchars($order['email'] ?? 'N/A'); ?></p>
+            <p><strong>Order Time:</strong> <?php echo $orderTime->format('Y-m-d H:i:s'); ?></p>
+            <p><strong>Total Order Price:</strong> ₱ <?php echo number_format($order['total_order_price'], 2); ?></p>
+            <p><strong>Status:</strong> <?php echo $isExpired ? '<span class="text-danger">Expired</span>' : '<span class="text-success">Active</span>'; ?></p>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($order['items'] as $item): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($item['product_name']); ?></td>
+                            <td><?php echo htmlspecialchars($item['category']); ?></td>
+                            <td>₱ <?php echo number_format($item['price'], 2); ?></td>
+                            <td><?php echo $item['quantity']; ?></td>
+                            <td>₱ <?php echo number_format($item['total_price'], 2); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+
+            <div class="mt-3">
+                <?php if ($status === 'pending'): ?>
+                    <form method="POST" action="update_order.php">
+                        <input type="hidden" name="order_id" value="<?php echo $orderId; ?>">
+                        <input type="hidden" name="action" value="ready">
+                        <button type="submit" class="btn btn-success" <?php echo $isExpired ? 'disabled' : ''; ?>>Ready</button>
+                    </form>
+
+                    <form method="POST" action="update_order.php">
+                        <input type="hidden" name="order_id" value="<?php echo $orderId; ?>">
+                        <input type="hidden" name="action" value="cancel">
+                        <button type="submit" class="btn btn-danger">Cancel</button>
+                    </form>
+
+                <?php elseif ($status === 'prepared'): ?>
+                    <form method="POST" action="update_order.php">
+                        <input type="hidden" name="order_id" value="<?php echo $orderId; ?>">
+                        <input type="hidden" name="action" value="unprepare">
+                        <button type="submit" class="btn btn-secondary" <?php echo $isExpired ? 'disabled' : ''; ?>>Unprepare</button>
+                    </form>
+
+                    <form method="POST" action="update_order.php">
+                        <input type="hidden" name="order_id" value="<?php echo $orderId; ?>">
+                        <input type="hidden" name="action" value="cancel">
+                        <button type="submit" class="btn btn-danger">Cancel</button>
+                    </form>
+
+                    <form method="POST" action="update_order.php">
+                        <input type="hidden" name="order_id" value="<?php echo $orderId; ?>">
+                        <input type="hidden" name="action" value="paid">
+                        <button type="submit" class="btn btn-success" <?php echo $isExpired ? 'disabled' : ''; ?>>Paid</button>
+                    </form>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php
+    endforeach;
+}
+?>

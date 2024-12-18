@@ -114,4 +114,4 @@ function addToCart(name, category, price, qtyInputId) {
 
 </script>
 
-<?php include_once('layouts/footer.php'); ?>
+<?php //include_once('layouts/footer.php'); ?>
