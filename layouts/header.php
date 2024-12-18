@@ -241,24 +241,37 @@ try {
                 <div class="header-date pull-left">
                     <strong><?php echo date("F j, Y, g:i a"); ?></strong>
                 </div>
+                <?php if ((int) $user['user_level'] == 1): ?>
+                    <div class="header-notif pull-right">
+                        <button class="notification-btn" id="notification-btn">
+                            <span id="notification-count"><?php echo $notification_count > 0 ? $notification_count : ''; ?></span>
+                            <img id="notif-img" src="pictures/bell-icon7.png" alt="Notifications">
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="notification-btn">
+                            <?php if ($notification_count > 0): ?>
+                                <?php foreach ($lowStockProducts as $product): ?>
+                                    <li><?php echo "Low stock alert: " . htmlspecialchars($product["name"]) . " has less than " . htmlspecialchars($product["critical_amount"]) . " items left."; ?></li>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <li>No new notifications</li>
+                            <?php endif; ?>
+                        </ul>
+                    </div>
+                <?php endif; ?>
 
-                <!-- Notification Section -->
-                <div class="header-notif pull-right">
-                    <button class="notification-btn" id="notification-btn" data-toggle="dropdown" aria-expanded="false">
-                        <span id="notification-count"><?php echo $notification_count; ?></span>
-                        <img id="notif-img" src="pictures/bell-icon7.png" alt="Notifications">
-                    </button>
-                    <!-- Notification Dropdown -->
-                    <ul class="dropdown-menu" aria-labelledby="notification-btn" style="display: none;">
-                        <?php if ($notification_count > 0): ?>
-                            <?php foreach ($lowStockProducts as $product): ?>
-                                <li><?php echo 'Low stock alert: ' . htmlspecialchars($product['name']) . ' has less than ' . $product['critical_amount'] . ' items left.'; ?></li>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <li>No new notifications</li>
-                        <?php endif; ?>
-                    </ul>
-                </div>
+
+                <?php
+                if ((int) $user['user_level'] != 1) {
+                    echo '
+<div class="header-cart pull-right">
+    <a href="cart.php" class="notification-btn" id="cart-btn">
+        <span id="cart-count">0</span>
+        <img id="cart-img" src="https://cdn-icons-png.flaticon.com/128/428/428173.png" alt="Cart">
+    </a>
+</div>
+';
+                }
+                ?>
 
                 <div class="pull-right clearfix">
                     <ul class="info-menu list-inline list-unstyled">
@@ -289,11 +302,19 @@ try {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
+
+
         $(document).ready(function () {
-            $('#notification-btn').on('click', function () {
-                $(this).next('.dropdown-menu').toggle();
-            });
-        });
+    $('#notification-btn').on('click', function (event) {
+        event.stopPropagation();
+        $('.header-notif .dropdown-menu').toggle();
+    });
+
+    $(document).on('click', function () {
+        $('.header-notif .dropdown-menu').hide();
+    });
+});
+
     </script>
 </body>
 
