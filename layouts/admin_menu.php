@@ -113,7 +113,7 @@
 <img src="https://cdn-icons-png.flaticon.com/512/14428/14428795.png" alt="Suppliers Icon" class="icon" style="width: 18px; height: 18px; margin-right: 10px;">
     Cashier
 </a>
-        <a href="group.php"><i class="fas fa-users icon"></i>Group</a>
+
         <a href="service.php"><i class="fas fa-users icon"></i>Service</a>
         <a href="sales_report.php"><i class="fas fa-chart-line icon"></i>Sales Report</a>
 
