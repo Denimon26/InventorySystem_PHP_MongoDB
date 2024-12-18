@@ -22,6 +22,43 @@ $today = new DateTime('today');
 $dates = [];
 $salesData = [];
 
+// Define thresholds for fast and slow-moving products
+$threshold_fast_moving = 50;  // Define a threshold for fast-moving products (e.g., 50 sold)
+$threshold_slow_moving = 10;  // Define a threshold for slow-moving products (e.g., 10 sold)
+
+// Aggregate the sales data for each product over the last 30 days
+$startOfDay = new MongoDB\BSON\UTCDateTime(strtotime('-30 days') * 1000); // 30 days ago
+$endOfDay = new MongoDB\BSON\UTCDateTime(time() * 1000); // current time
+
+$salesAggregation = $orders->aggregate([
+    ['$match' => [
+        'status' => 'completed',
+        'date_completed' => ['$gte' => $startOfDay, '$lt' => $endOfDay]
+    ]],
+    ['$group' => [
+        '_id' => '$product_id',  // Assuming each order contains a product_id
+        'total_sales' => ['$sum' => '$quantity']  // Summing up the quantity sold
+    ]],
+]);
+
+$fastMovingProducts = [];
+$slowMovingProducts = [];
+foreach ($salesAggregation as $sale) {
+    if ($sale['total_sales'] > $threshold_fast_moving) {
+        $fastMovingProducts[] = $sale['_id'];
+    } elseif ($sale['total_sales'] < $threshold_slow_moving) {
+        $slowMovingProducts[] = $sale['_id'];
+    }
+}
+
+// Query products classified as fast-moving and slow-moving
+$fastMoving = $product->find(['_id' => ['$in' => $fastMovingProducts]]);
+$slowMoving = $product->find(['_id' => ['$in' => $slowMovingProducts]]);
+
+// Get critical-level products (quantity < 20)
+$criticalLevelProducts = $product->find(['quantity' => ['$lt' => 20]]);
+
+// Get sales data for the last 6 days
 for ($i = 5; $i >= 0; $i--) {
     $date = clone $today;
     $date->modify("-$i days");
@@ -64,42 +101,23 @@ for ($i = 5; $i >= 0; $i--) {
     </div>
 </a>
 
-<div class="col-third">
+<!-- Critical Level Products -->
+<div class="col-md-6">
     <div class="panel panel-default">
         <div class="panel-heading">
             <strong>
-                <span class="glyphicon glyphicon-th-list"></span>
+                <span class="glyphicon glyphicon-warning-sign"></span>
                 <span>Critical Level Products</span>
             </strong>
         </div>
         <div class="panel-body">
             <ul class="list-group">
                 <?php
-                $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
-                $client = new Client($uri);
-                $database = $client->selectDatabase('inventory_system');
-                $products2 = $database->selectCollection('product');
-
-                $products_query = [
-                    '$expr' => [
-                        '$lte' => ['$quantity', '$critical_amount']
-                    ]
-                ];
-
-                $products_by_quantity = $products2->find($products_query, ['sort' => ['quantity' => 1]])->toArray();
-
-                if (empty($products_by_quantity)) {
+                if (empty($criticalLevelProducts)) {
                     echo "<li class='list-group-item'>No critical level products found</li>";
                 } else {
-                    foreach ($products_by_quantity as $prod) {
-                        $quantity = $prod['quantity'];
-                        ?>
-                        <li class="list-group-item">
-                            <span class="badge"><?php echo $quantity; ?></span>
-                            <?php echo htmlspecialchars($prod['name']); ?>
-                            <span class="label label-danger pull-right">Critical</span>
-                        </li>
-                        <?php
+                    foreach ($criticalLevelProducts as $prod) {
+                        echo "<li class='list-group-item'>" . htmlspecialchars($prod['name']) . " - Quantity: " . $prod['quantity'] . "</li>";
                     }
                 }
                 ?>
@@ -107,42 +125,93 @@ for ($i = 5; $i >= 0; $i--) {
         </div>
     </div>
 </div>
-    <!-- Last 5 Transactions -->
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <strong>
-                    <span class="glyphicon glyphicon-list-alt"></span>
-                    <span>Last 5 Transactions</span>
-                </strong>
-            </div>
-            <div class="panel-body">
-                <ul class="list-group">
-                    <?php foreach ($lastTransactions as $transaction): ?>
-                        <li class="list-group-item">
-                            <strong><?php echo htmlspecialchars($transaction['username']); ?></strong> 
-                            - <?php echo $transaction['date_completed']->toDateTime()->format('Y-m-d H:i:s'); ?>
-                            <span class="badge">₱ <?php echo number_format($transaction['total_order_price'], 2); ?></span>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        </div>
-    </div>
 
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <strong>
-                    <span class="glyphicon glyphicon-signal"></span>
-                    <span>Sales Today vs Last 5 Days</span>
-                </strong>
-            </div>
-            <div class="panel-body">
-                <canvas id="salesChart" width="400" height="200"></canvas>
-            </div>
+<!-- Fast Moving Products -->
+<div class="col-md-6">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <strong>
+                <span class="glyphicon glyphicon-arrow-up"></span>
+                <span>Fast Moving Products</span>
+            </strong>
+        </div>
+        <div class="panel-body">
+            <ul class="list-group">
+                <?php
+                if (empty($fastMoving)) {
+                    echo "<li class='list-group-item'>No fast-moving products found</li>";
+                } else {
+                    foreach ($fastMoving as $prod) {
+                        echo "<li class='list-group-item'>" . htmlspecialchars($prod['name']) . "</li>";
+                    }
+                }
+                ?>
+            </ul>
         </div>
     </div>
+</div>
+
+<!-- Slow Moving Products -->
+<div class="col-md-6">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <strong>
+                <span class="glyphicon glyphicon-arrow-down"></span>
+                <span>Slow Moving Products</span>
+            </strong>
+        </div>
+        <div class="panel-body">
+            <ul class="list-group">
+                <?php
+                if (empty($slowMoving)) {
+                    echo "<li class='list-group-item'>No slow-moving products found</li>";
+                } else {
+                    foreach ($slowMoving as $prod) {
+                        echo "<li class='list-group-item'>" . htmlspecialchars($prod['name']) . "</li>";
+                    }
+                }
+                ?>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Last 5 Transactions -->
+<div class="col-md-6">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <strong>
+                <span class="glyphicon glyphicon-list-alt"></span>
+                <span>Last 5 Transactions</span>
+            </strong>
+        </div>
+        <div class="panel-body">
+            <ul class="list-group">
+                <?php foreach ($lastTransactions as $transaction): ?>
+                    <li class="list-group-item">
+                        <strong><?php echo htmlspecialchars($transaction['username']); ?></strong> 
+                        - <?php echo $transaction['date_completed']->toDateTime()->format('Y-m-d H:i:s'); ?>
+                        <span class="badge">₱ <?php echo number_format($transaction['total_order_price'], 2); ?></span>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-6">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <strong>
+                <span class="glyphicon glyphicon-signal"></span>
+                <span>Sales Today vs Last 5 Days</span>
+            </strong>
+        </div>
+        <div class="panel-body">
+            <canvas id="salesChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+</div>
 </div>
 
 <script>
