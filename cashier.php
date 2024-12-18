@@ -71,6 +71,9 @@ function displayOrders($orders, $status)
     <div class="order-ticket mb-4 p-3 border">
       <h5><strong>Order ID:</strong> <?php echo $orderId; ?></h5>
       <p><strong>Username:</strong> <?php echo htmlspecialchars($order['username']); ?></p>
+      <p><strong>Number:</strong> <?php echo htmlspecialchars($order['number'] ?? 'N/A'); ?></p>
+<p><strong>Email:</strong> <?php echo htmlspecialchars($order['email'] ?? 'N/A'); ?></p>
+
       <p><strong>Order Time:</strong> <?php echo $order['order_time']->toDateTime()->format('Y-m-d H:i:s'); ?></p>
       <p><strong>Total Order Price:</strong> ₱ <?php echo number_format($order['total_order_price'], 2); ?></p>
       <table class="table table-bordered">

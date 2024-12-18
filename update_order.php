@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $orders->updateOne(['_id' => new MongoDB\BSON\ObjectId($orderId)], ['$set' => ['status' => 'pending']]);
         break;
       case 'paid':
-        $currentDate = new UTCDateTime();
+        $currentDate = new MongoDB\BSON\UTCDateTime();
         
         $orders->updateOne([
           '_id' => new MongoDB\BSON\ObjectId($orderId)

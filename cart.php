@@ -42,6 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
         $orders->insertOne([
             '_id' => $order_id,
             'username' => $username,
+            'number'=>$user['number'],
+            'email'=>$user['email'],
             'items' => $items,
             'total_order_price' => $total_order_price,
             'status' => 'pending',

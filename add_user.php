@@ -45,6 +45,8 @@
        $username   = remove_junk(($_POST['username']));
        $password   = remove_junk(($_POST['password']));
        $group_name   = remove_junk(($_POST['group_name']));
+       $number = $_POST['number'];
+       $email = $_POST['email'];
        $user_level = (int)($_POST['level']);
        $password = sha1($password);
        
@@ -54,6 +56,8 @@
         'password'=>$password,
         'group_level'=>$user_level,
         'group_name'=>$group_name,
+        'number' => $number,
+        'email' => $email,
         'group_status'=>"1",
         'last-login'=>null,
         'status'=>1
@@ -91,6 +95,14 @@
                 <label for="username">Username</label>
                 <input type="text" class="form-control" name="username" placeholder="Username">
             </div>
+            <div class="form-group">
+            <label for="number" class="control-label">Contact Number</label>
+            <input type="text" class="form-control" name="number" placeholder="Contact Number" required>
+          </div>
+          <div class="form-group">
+            <label for="email" class="control-label">Email</label>
+            <input type="text" class="form-control" name="email" placeholder="Email" required>
+          </div>
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" class="form-control" name ="password"  placeholder="Password">

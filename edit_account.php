@@ -14,38 +14,42 @@ $admins = $db->admin;
 $user_id = $_SESSION['user_id'] ?? null;
 
 if (empty($user_id)) {
-    redirect('home.php', false);
+  redirect('home.php', false);
 }
 
 $user = $users->findOne(['_id' => new ObjectId($user_id)]);
 if (!$user) {
-    $user = $admins->findOne(['_id' => new ObjectId($user_id)]);
+  $user = $admins->findOne(['_id' => new ObjectId($user_id)]);
 }
 
 if (!$user) {
-    redirect('home.php', false);
+  redirect('home.php', false);
 }
 
-function page_require_level($required_level) {
-    $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
-    $client = new Client($uri);
-    $database = $client->selectDatabase('inventory_system');
-    $admins = $database->selectCollection('admin');
+function page_require_level($required_level)
+{
+  $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+  $client = new Client($uri);
+  $database = $client->selectDatabase('inventory_system');
+  $admins = $database->selectCollection('admin');
 
-    $admin = $admins->findOne(['_id' => new ObjectId($_SESSION['user_id'])]);
+  $admin = $admins->findOne(['_id' => new ObjectId($_SESSION['user_id'])]);
 
-    if (!isset($admin)) {
-        redirect('index.php', false);
-    }
+  if (!isset($admin)) {
+    redirect('index.php', false);
+  }
 
-    if ($admin['user_level'] <= (int)$required_level) {
-        return true;
-    } else {
-        redirect('home.php', false);
-    }
+  if ($admin['user_level'] <= (int) $required_level) {
+    return true;
+  } else {
+    if ($admin['user_level'] != 1)
+      redirect('home.php', false);
+    else
+      redirect('admin.php', false);
+  }
 }
 
-page_require_level(3);
+//page_require_level(3);
 ?>
 
 
@@ -100,9 +104,13 @@ if (isset($_POST['update'])) {
   if (empty($errors)) {
     $name = remove_junk($_POST['name']);
     $username = remove_junk($_POST['username']);
+    $number = $_POST['number'];
+    $email = $_POST['email'];
     $data = [
       'name' => $name,
-      'username' => $username
+      'username' => $username,
+      'number' => $number,
+      'email' => $email,
     ];
     $result = $users->updateOne(
       ['_id' => $user_id],
@@ -137,10 +145,8 @@ if (isset($_POST['update'])) {
         <div class="row">
           <div class="col-md-4">
             <?php
-            // Assuming you retrieved the user document from MongoDB
-            $image = $user['image']; // Assuming 'image' field contains the Base64 string
-            
-            // Display the image using the Base64 string or fallback to default image
+            $image = $user['image'];
+
             if (!empty($image)) {
               echo '<img src="' . htmlspecialchars($image) . '" alt="User Image" style="width: 100px; height: 100px; border-radius: 50%;">';
             } else {
@@ -180,6 +186,18 @@ if (isset($_POST['update'])) {
             <input type="text" class="form-control" name="username"
               value="<?php echo remove_junk(ucwords($user['username'])); ?>">
           </div>
+          <div class="form-group">
+            <label for="number" class="control-label">Contact Number</label>
+            <input type="text" class="form-control" name="number"
+              value="<?php echo isset($user['number']) && !empty($user['number']) ? remove_junk(ucwords($user['number'])) : 'No Number'; ?>">
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="control-label">Email</label>
+            <input type="text" class="form-control" name="email"
+              value="<?php echo isset($user['email']) && !empty($user['email']) ? remove_junk(ucwords($user['email'])) : 'No Email'; ?>">
+          </div>
+
           <div class="form-account clearfix">
             <a href="change_password.php" class="btn btn-primary pull-right">Change Password</a>
             <button type="submit" name="update" class="btn btn-primary">Update</button>

@@ -1,6 +1,10 @@
 <?php
 ob_start();
 require_once('includes/load.php');
+require 'vendor/autoload.php';
+
+use MongoDB\Client;
+
 if ($session->isUserLoggedIn(true)) {
   redirect('home.php', false);
 }
@@ -28,6 +32,15 @@ if ($session->isUserLoggedIn(true)) {
             <input type="text" class="form-control" name="username" placeholder="Username" required>
           </div>
           <div class="form-group">
+            <label for="number" class="control-label">Contact Number</label>
+            <input type="text" class="form-control" name="number" placeholder="Contact Number" required>
+          </div>
+          <div class="form-group">
+            <label for="email" class="control-label">Email</label>
+            <input type="text" class="form-control" name="email" placeholder="Email" required>
+          </div>
+          
+          <div class="form-group">
             <label for="password" class="control-label">Password</label>
             <input type="password" class="form-control" name="password" placeholder="Password" required>
           </div>
@@ -44,7 +57,6 @@ if ($session->isUserLoggedIn(true)) {
           </div>
         </form>
         <p>Already have an account? <a href="index.php">Login here</a></p>
-
       </div>
     </div>
   </div>
@@ -55,6 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $name = $_POST['name'];
   $username = $_POST['username'];
   $password = $_POST['password'];
+  $number = $_POST['number'];
+  $email = $_POST['email'];
   $confirm_password = $_POST['confirm_password'];
   $image = $_FILES['image'];
 
@@ -64,20 +78,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
   $hashed_password = sha1($password);
-  $user_level = "2";
-  $status = 1;
-  $group_name = "";
-  $group_level = "";
-  $group_status = "";
+
+  try {
+    $uri = 'mongodb+srv://boladodenzel:denzelbolado@cluster0.9ahxb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+    $client = new Client($uri);
+    $database = $client->selectDatabase('inventory_system');
+    $users = $database->selectCollection('users');
+  } catch (Exception $e) {
+    $session->msg('d', 'Failed to connect to the database.');
+    redirect('register.php', false);
+  }
 
   $image_name = $image['name'];
   $image_tmp = $image['tmp_name'];
   $image_folder = 'uploads/users/' . basename($image_name);
 
   if (move_uploaded_file($image_tmp, $image_folder)) {
-    $query = "INSERT INTO users (name, username, password, image, user_level, status, group_name, group_level, group_status) 
-              VALUES ('{$name}', '{$username}', '{$hashed_password}', '{$image_name}', '{$user_level}', '{$status}', '{$group_name}', '{$group_level}', '{$group_status}')";
-    if ($db->query($query)) {
+    $user_data = [
+      'name' => $name,
+      'username' => $username,
+      'password' => $hashed_password,
+      'number' => $number,
+      'email' => $email,
+      'image' => $image_name,
+      'user_level' => '2',
+      'status' => 1,
+      'group_name' => '',
+      'group_level' => '',
+      'group_status' => ''
+    ];
+
+    $insertResult = $users->insertOne($user_data);
+
+    if ($insertResult->getInsertedCount() === 1) {
       $session->msg('s', 'Account created successfully.');
       redirect('login.php', false);
     } else {
