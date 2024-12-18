@@ -17,6 +17,7 @@ $preparedOrders = $orders->find(['status' => 'prepared']);
 $usernameFilter = isset($_POST['username']) ? $_POST['username'] : null;
 $completedOrders = $usernameFilter ? $orders->find(['status' => 'completed', 'username' => $usernameFilter]) : [];
 
+//define('PRE_ORDER_TIME_LIMIT', 86,400);
 define('PRE_ORDER_TIME_LIMIT', 60);
 ?>
 
