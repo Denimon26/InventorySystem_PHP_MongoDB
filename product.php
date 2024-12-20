@@ -163,7 +163,7 @@ $products = $products2->find();
       <td class="text-center" style="background-color: <?php echo ($critical_amount > 0 && $quantity <= $critical_amount) ? '#ffdddd' : ''; ?>"><?php echo remove_junk($product['categories']); ?></td>
       <td class="text-center"style="background-color: <?php echo ($critical_amount > 0 && $quantity <= $critical_amount) ? '#ffdddd' : ''; ?>"><?php echo remove_junk($product['quantity']); ?></td>
       <td class="text-center"style="background-color: <?php echo ($critical_amount > 0 && $quantity <= $critical_amount) ? '#ffdddd' : ''; ?>">₱ <?php echo remove_junk($product['buy_price']); ?></td>
-      <td class="text-center"style="background-color: <?php echo ($critical_amount > 0 && $quantity <= $critical_amount) ? '#ffdddd' : ''; ?>"><?php echo remove_junk($product['eoq']); ?></td>
+      <td class="text-center" style="background-color: <?php echo ($critical_amount > 0 && $quantity <= $critical_amount) ? '#ffdddd' : ''; ?>"><?php echo (int)remove_junk($product['eoq']); ?></td>
       <td class="text-center"style="background-color: <?php echo ($critical_amount > 0 && $quantity <= $critical_amount) ? '#ffdddd' : ''; ?>"><?php echo read_date($product['date']); ?></td>
       <td class="text-center"style="background-color: <?php echo ($critical_amount > 0 && $quantity <= $critical_amount) ? '#ffdddd' : ''; ?>">
         <div class="btn-group">
